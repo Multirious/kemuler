@@ -1,9 +1,5 @@
-pub use enigo::{
-    Enigo, Key as EnigoKeyboard, KeyboardControllable, MouseButton as EnigoMouseButton,
-    MouseControllable,
-};
-
 use crate::{
+    backend::{get_keyboard_backend, get_mouse_backend},
     combinator::Combine,
     emulatable::{EmulateAbsoluteValue, EmulateRelativeValue},
 };
@@ -583,272 +579,14 @@ pub enum Keyboard {
     Raw(u16),
 }
 
-impl Keyboard {
-    fn as_enigo(&self) -> EnigoKeyboard {
-        match self {
-            Keyboard::Num0 => EnigoKeyboard::Num0,
-            Keyboard::Num1 => EnigoKeyboard::Num1,
-            Keyboard::Num2 => EnigoKeyboard::Num2,
-            Keyboard::Num3 => EnigoKeyboard::Num3,
-            Keyboard::Num4 => EnigoKeyboard::Num4,
-            Keyboard::Num5 => EnigoKeyboard::Num5,
-            Keyboard::Num6 => EnigoKeyboard::Num6,
-            Keyboard::Num7 => EnigoKeyboard::Num7,
-            Keyboard::Num8 => EnigoKeyboard::Num8,
-            Keyboard::Num9 => EnigoKeyboard::Num9,
-            Keyboard::A => EnigoKeyboard::A,
-            Keyboard::B => EnigoKeyboard::B,
-            Keyboard::C => EnigoKeyboard::C,
-            Keyboard::D => EnigoKeyboard::D,
-            Keyboard::E => EnigoKeyboard::E,
-            Keyboard::F => EnigoKeyboard::F,
-            Keyboard::G => EnigoKeyboard::G,
-            Keyboard::H => EnigoKeyboard::H,
-            Keyboard::I => EnigoKeyboard::I,
-            Keyboard::J => EnigoKeyboard::J,
-            Keyboard::K => EnigoKeyboard::K,
-            Keyboard::L => EnigoKeyboard::L,
-            Keyboard::M => EnigoKeyboard::M,
-            Keyboard::N => EnigoKeyboard::N,
-            Keyboard::O => EnigoKeyboard::O,
-            Keyboard::P => EnigoKeyboard::P,
-            Keyboard::Q => EnigoKeyboard::Q,
-            Keyboard::R => EnigoKeyboard::R,
-            Keyboard::S => EnigoKeyboard::S,
-            Keyboard::T => EnigoKeyboard::T,
-            Keyboard::U => EnigoKeyboard::U,
-            Keyboard::V => EnigoKeyboard::V,
-            Keyboard::W => EnigoKeyboard::W,
-            Keyboard::X => EnigoKeyboard::X,
-            Keyboard::Y => EnigoKeyboard::Y,
-            Keyboard::Z => EnigoKeyboard::Z,
-            Keyboard::AbntC1 => EnigoKeyboard::AbntC1,
-            Keyboard::AbntC2 => EnigoKeyboard::AbntC2,
-            Keyboard::Accept => EnigoKeyboard::Accept,
-            Keyboard::Add => EnigoKeyboard::Add,
-            Keyboard::Alt => EnigoKeyboard::Alt,
-            Keyboard::Apps => EnigoKeyboard::Apps,
-            Keyboard::Attn => EnigoKeyboard::Attn,
-            Keyboard::Backspace => EnigoKeyboard::Backspace,
-            Keyboard::BrowserBack => EnigoKeyboard::BrowserBack,
-            Keyboard::BrowserFavorites => EnigoKeyboard::BrowserFavorites,
-            Keyboard::BrowserForward => EnigoKeyboard::BrowserForward,
-            Keyboard::BrowserHome => EnigoKeyboard::BrowserHome,
-            Keyboard::BrowserRefresh => EnigoKeyboard::BrowserRefresh,
-            Keyboard::BrowserSearch => EnigoKeyboard::BrowserSearch,
-            Keyboard::BrowserStop => EnigoKeyboard::BrowserStop,
-            Keyboard::Cancel => EnigoKeyboard::Cancel,
-            Keyboard::CapsLock => EnigoKeyboard::CapsLock,
-            Keyboard::Clear => EnigoKeyboard::Clear,
-            Keyboard::Control => EnigoKeyboard::Control,
-            Keyboard::Convert => EnigoKeyboard::Convert,
-            Keyboard::Crsel => EnigoKeyboard::Crsel,
-            Keyboard::DBEAlphanumeric => EnigoKeyboard::DBEAlphanumeric,
-            Keyboard::DBECodeinput => EnigoKeyboard::DBECodeinput,
-            Keyboard::DBEDetermineString => EnigoKeyboard::DBEDetermineString,
-            Keyboard::DBEEnterDLGConversionMode => EnigoKeyboard::DBEEnterDLGConversionMode,
-            Keyboard::DBEEnterIMEConfigMode => EnigoKeyboard::DBEEnterIMEConfigMode,
-            Keyboard::DBEEnterWordRegisterMode => EnigoKeyboard::DBEEnterWordRegisterMode,
-            Keyboard::DBEFlushString => EnigoKeyboard::DBEFlushString,
-            Keyboard::DBEHiragana => EnigoKeyboard::DBEHiragana,
-            Keyboard::DBEKatakana => EnigoKeyboard::DBEKatakana,
-            Keyboard::DBENoCodepoint => EnigoKeyboard::DBENoCodepoint,
-            Keyboard::DBENoRoman => EnigoKeyboard::DBENoRoman,
-            Keyboard::DBERoman => EnigoKeyboard::DBERoman,
-            Keyboard::DBESBCSChar => EnigoKeyboard::DBESBCSChar,
-            Keyboard::DBESChar => EnigoKeyboard::DBESChar,
-            Keyboard::Decimal => EnigoKeyboard::Decimal,
-            Keyboard::Delete => EnigoKeyboard::Delete,
-            Keyboard::Divide => EnigoKeyboard::Divide,
-            Keyboard::DownArrow => EnigoKeyboard::DownArrow,
-            Keyboard::End => EnigoKeyboard::End,
-            Keyboard::Ereof => EnigoKeyboard::Ereof,
-            Keyboard::Escape => EnigoKeyboard::Escape,
-            Keyboard::Execute => EnigoKeyboard::Execute,
-            Keyboard::Exsel => EnigoKeyboard::Exsel,
-            Keyboard::F1 => EnigoKeyboard::F1,
-            Keyboard::F2 => EnigoKeyboard::F2,
-            Keyboard::F3 => EnigoKeyboard::F3,
-            Keyboard::F4 => EnigoKeyboard::F4,
-            Keyboard::F5 => EnigoKeyboard::F5,
-            Keyboard::F6 => EnigoKeyboard::F6,
-            Keyboard::F7 => EnigoKeyboard::F7,
-            Keyboard::F8 => EnigoKeyboard::F8,
-            Keyboard::F9 => EnigoKeyboard::F9,
-            Keyboard::F10 => EnigoKeyboard::F10,
-            Keyboard::F11 => EnigoKeyboard::F11,
-            Keyboard::F12 => EnigoKeyboard::F12,
-            Keyboard::F13 => EnigoKeyboard::F13,
-            Keyboard::F14 => EnigoKeyboard::F14,
-            Keyboard::F15 => EnigoKeyboard::F15,
-            Keyboard::F16 => EnigoKeyboard::F16,
-            Keyboard::F17 => EnigoKeyboard::F17,
-            Keyboard::F18 => EnigoKeyboard::F18,
-            Keyboard::F19 => EnigoKeyboard::F19,
-            Keyboard::F20 => EnigoKeyboard::F20,
-            Keyboard::F21 => EnigoKeyboard::F21,
-            Keyboard::F22 => EnigoKeyboard::F22,
-            Keyboard::F23 => EnigoKeyboard::F23,
-            Keyboard::F24 => EnigoKeyboard::F24,
-            Keyboard::Final => EnigoKeyboard::Final,
-            Keyboard::GamepadA => EnigoKeyboard::GamepadA,
-            Keyboard::GamepadB => EnigoKeyboard::GamepadB,
-            Keyboard::GamepadDPadDown => EnigoKeyboard::GamepadDPadDown,
-            Keyboard::GamepadDPadLeft => EnigoKeyboard::GamepadDPadLeft,
-            Keyboard::GamepadDPadRight => EnigoKeyboard::GamepadDPadRight,
-            Keyboard::GamepadDPadUp => EnigoKeyboard::GamepadDPadUp,
-            Keyboard::GamepadLeftShoulder => EnigoKeyboard::GamepadLeftShoulder,
-            Keyboard::GamepadLeftThumbstickButton => EnigoKeyboard::GamepadLeftThumbstickButton,
-            Keyboard::GamepadLeftThumbstickDown => EnigoKeyboard::GamepadLeftThumbstickDown,
-            Keyboard::GamepadLeftThumbstickLeft => EnigoKeyboard::GamepadLeftThumbstickLeft,
-            Keyboard::GamepadLeftThumbstickRight => EnigoKeyboard::GamepadLeftThumbstickRight,
-            Keyboard::GamepadLeftThumbstickUp => EnigoKeyboard::GamepadLeftThumbstickUp,
-            Keyboard::GamepadLeftTrigger => EnigoKeyboard::GamepadLeftTrigger,
-            Keyboard::GamepadMenu => EnigoKeyboard::GamepadMenu,
-            Keyboard::GamepadRightShoulder => EnigoKeyboard::GamepadRightShoulder,
-            Keyboard::GamepadRightThumbstickButton => EnigoKeyboard::GamepadRightThumbstickButton,
-            Keyboard::GamepadRightThumbstickDown => EnigoKeyboard::GamepadRightThumbstickDown,
-            Keyboard::GamepadRightThumbstickLeft => EnigoKeyboard::GamepadRightThumbstickLeft,
-            Keyboard::GamepadRightThumbstickRight => EnigoKeyboard::GamepadRightThumbstickRight,
-            Keyboard::GamepadRightThumbstickUp => EnigoKeyboard::GamepadRightThumbstickUp,
-            Keyboard::GamepadRightTrigger => EnigoKeyboard::GamepadRightTrigger,
-            Keyboard::GamepadView => EnigoKeyboard::GamepadView,
-            Keyboard::GamepadX => EnigoKeyboard::GamepadX,
-            Keyboard::GamepadY => EnigoKeyboard::GamepadY,
-            Keyboard::Hangeul => EnigoKeyboard::Hangeul,
-            Keyboard::Hangul => EnigoKeyboard::Hangul,
-            Keyboard::Hanja => EnigoKeyboard::Hanja,
-            Keyboard::Help => EnigoKeyboard::Help,
-            Keyboard::Home => EnigoKeyboard::Home,
-            Keyboard::Ico00 => EnigoKeyboard::Ico00,
-            Keyboard::IcoClear => EnigoKeyboard::IcoClear,
-            Keyboard::IcoHelp => EnigoKeyboard::IcoHelp,
-            Keyboard::IMEOff => EnigoKeyboard::IMEOff,
-            Keyboard::IMEOn => EnigoKeyboard::IMEOn,
-            Keyboard::Insert => EnigoKeyboard::Insert,
-            Keyboard::Junja => EnigoKeyboard::Junja,
-            Keyboard::Kana => EnigoKeyboard::Kana,
-            Keyboard::Kanji => EnigoKeyboard::Kanji,
-            Keyboard::LaunchApp1 => EnigoKeyboard::LaunchApp1,
-            Keyboard::LaunchApp2 => EnigoKeyboard::LaunchApp2,
-            Keyboard::LaunchMail => EnigoKeyboard::LaunchMail,
-            Keyboard::LaunchMediaSelect => EnigoKeyboard::LaunchMediaSelect,
-            Keyboard::LButton => EnigoKeyboard::LButton,
-            Keyboard::LControl => EnigoKeyboard::LControl,
-            Keyboard::LeftArrow => EnigoKeyboard::LeftArrow,
-            Keyboard::LMenu => EnigoKeyboard::LMenu,
-            Keyboard::LShift => EnigoKeyboard::LShift,
-            Keyboard::LWin => EnigoKeyboard::LWin,
-            Keyboard::MButton => EnigoKeyboard::MButton,
-            Keyboard::MediaNextTrack => EnigoKeyboard::MediaNextTrack,
-            Keyboard::MediaPlayPause => EnigoKeyboard::MediaPlayPause,
-            Keyboard::MediaPrevTrack => EnigoKeyboard::MediaPrevTrack,
-            Keyboard::MediaStop => EnigoKeyboard::MediaStop,
-            Keyboard::Meta => EnigoKeyboard::Meta,
-            Keyboard::ModeChange => EnigoKeyboard::ModeChange,
-            Keyboard::Multiply => EnigoKeyboard::Multiply,
-            Keyboard::NavigationAccept => EnigoKeyboard::NavigationAccept,
-            Keyboard::NavigationCancel => EnigoKeyboard::NavigationCancel,
-            Keyboard::NavigationDown => EnigoKeyboard::NavigationDown,
-            Keyboard::NavigationLeft => EnigoKeyboard::NavigationLeft,
-            Keyboard::NavigationMenu => EnigoKeyboard::NavigationMenu,
-            Keyboard::NavigationRight => EnigoKeyboard::NavigationRight,
-            Keyboard::NavigationUp => EnigoKeyboard::NavigationUp,
-            Keyboard::NavigationView => EnigoKeyboard::NavigationView,
-            Keyboard::NoName => EnigoKeyboard::NoName,
-            Keyboard::NonConvert => EnigoKeyboard::NonConvert,
-            Keyboard::None => EnigoKeyboard::None,
-            Keyboard::Numlock => EnigoKeyboard::Numlock,
-            Keyboard::Numpad0 => EnigoKeyboard::Numpad0,
-            Keyboard::Numpad1 => EnigoKeyboard::Numpad1,
-            Keyboard::Numpad2 => EnigoKeyboard::Numpad2,
-            Keyboard::Numpad3 => EnigoKeyboard::Numpad3,
-            Keyboard::Numpad4 => EnigoKeyboard::Numpad4,
-            Keyboard::Numpad5 => EnigoKeyboard::Numpad5,
-            Keyboard::Numpad6 => EnigoKeyboard::Numpad6,
-            Keyboard::Numpad7 => EnigoKeyboard::Numpad7,
-            Keyboard::Numpad8 => EnigoKeyboard::Numpad8,
-            Keyboard::Numpad9 => EnigoKeyboard::Numpad9,
-            Keyboard::OEM1 => EnigoKeyboard::OEM1,
-            Keyboard::OEM102 => EnigoKeyboard::OEM102,
-            Keyboard::OEM2 => EnigoKeyboard::OEM2,
-            Keyboard::OEM3 => EnigoKeyboard::OEM3,
-            Keyboard::OEM4 => EnigoKeyboard::OEM4,
-            Keyboard::OEM5 => EnigoKeyboard::OEM5,
-            Keyboard::OEM6 => EnigoKeyboard::OEM6,
-            Keyboard::OEM7 => EnigoKeyboard::OEM7,
-            Keyboard::OEM8 => EnigoKeyboard::OEM8,
-            Keyboard::OEMAttn => EnigoKeyboard::OEMAttn,
-            Keyboard::OEMAuto => EnigoKeyboard::OEMAuto,
-            Keyboard::OEMAx => EnigoKeyboard::OEMAx,
-            Keyboard::OEMBacktab => EnigoKeyboard::OEMBacktab,
-            Keyboard::OEMClear => EnigoKeyboard::OEMClear,
-            Keyboard::OEMComma => EnigoKeyboard::OEMComma,
-            Keyboard::OEMCopy => EnigoKeyboard::OEMCopy,
-            Keyboard::OEMCusel => EnigoKeyboard::OEMCusel,
-            Keyboard::OEMEnlw => EnigoKeyboard::OEMEnlw,
-            Keyboard::OEMFinish => EnigoKeyboard::OEMFinish,
-            Keyboard::OEMFJJisho => EnigoKeyboard::OEMFJJisho,
-            Keyboard::OEMFJLoya => EnigoKeyboard::OEMFJLoya,
-            Keyboard::OEMFJMasshou => EnigoKeyboard::OEMFJMasshou,
-            Keyboard::OEMFJRoya => EnigoKeyboard::OEMFJRoya,
-            Keyboard::OEMFJTouroku => EnigoKeyboard::OEMFJTouroku,
-            Keyboard::OEMJump => EnigoKeyboard::OEMJump,
-            Keyboard::OEMMinus => EnigoKeyboard::OEMMinus,
-            Keyboard::OEMNECEqual => EnigoKeyboard::OEMNECEqual,
-            Keyboard::OEMPA1 => EnigoKeyboard::OEMPA1,
-            Keyboard::OEMPA2 => EnigoKeyboard::OEMPA2,
-            Keyboard::OEMPA3 => EnigoKeyboard::OEMPA3,
-            Keyboard::OEMPeriod => EnigoKeyboard::OEMPeriod,
-            Keyboard::OEMPlus => EnigoKeyboard::OEMPlus,
-            Keyboard::OEMReset => EnigoKeyboard::OEMReset,
-            Keyboard::OEMWsctrl => EnigoKeyboard::OEMWsctrl,
-            Keyboard::Option => EnigoKeyboard::Option,
-            Keyboard::PA1 => EnigoKeyboard::PA1,
-            Keyboard::Packet => EnigoKeyboard::Packet,
-            Keyboard::PageDown => EnigoKeyboard::PageDown,
-            Keyboard::PageUp => EnigoKeyboard::PageUp,
-            Keyboard::Pause => EnigoKeyboard::Pause,
-            Keyboard::Play => EnigoKeyboard::Play,
-            Keyboard::Print => EnigoKeyboard::Print,
-            Keyboard::Processkey => EnigoKeyboard::Processkey,
-            Keyboard::RButton => EnigoKeyboard::RButton,
-            Keyboard::RControl => EnigoKeyboard::RControl,
-            Keyboard::Return => EnigoKeyboard::Return,
-            Keyboard::RightArrow => EnigoKeyboard::RightArrow,
-            Keyboard::RMenu => EnigoKeyboard::RMenu,
-            Keyboard::RShift => EnigoKeyboard::RShift,
-            Keyboard::RWin => EnigoKeyboard::RWin,
-            Keyboard::Scroll => EnigoKeyboard::Scroll,
-            Keyboard::Select => EnigoKeyboard::Select,
-            Keyboard::Separator => EnigoKeyboard::Separator,
-            Keyboard::Shift => EnigoKeyboard::Shift,
-            Keyboard::Sleep => EnigoKeyboard::Sleep,
-            Keyboard::Snapshot => EnigoKeyboard::Snapshot,
-            Keyboard::Space => EnigoKeyboard::Space,
-            Keyboard::Subtract => EnigoKeyboard::Subtract,
-            Keyboard::Tab => EnigoKeyboard::Tab,
-            Keyboard::UpArrow => EnigoKeyboard::UpArrow,
-            Keyboard::VolumeDown => EnigoKeyboard::VolumeDown,
-            Keyboard::VolumeMute => EnigoKeyboard::VolumeMute,
-            Keyboard::VolumeUp => EnigoKeyboard::VolumeUp,
-            Keyboard::XButton1 => EnigoKeyboard::XButton1,
-            Keyboard::XButton2 => EnigoKeyboard::XButton2,
-            Keyboard::Zoom => EnigoKeyboard::Zoom,
-            Keyboard::Layout(char) => EnigoKeyboard::Layout(*char),
-            Keyboard::Raw(code) => EnigoKeyboard::Raw(*code),
-        }
-    }
-}
-
 impl EmulateAbsoluteValue for Keyboard {
     type Value = bool;
 
     fn change_to(&self, to: Self::Value) -> &Self {
         if to {
-            Enigo.key_down(self.as_enigo());
+            get_keyboard_backend().key_down(self);
         } else {
-            Enigo.key_up(self.as_enigo());
+            get_keyboard_backend().key_up(self);
         }
         self
     }
@@ -866,18 +604,6 @@ pub enum MouseButton {
     Forward,
 }
 
-impl MouseButton {
-    fn as_enigo(&self) -> EnigoMouseButton {
-        match self {
-            MouseButton::Left => EnigoMouseButton::Left,
-            MouseButton::Middle => EnigoMouseButton::Middle,
-            MouseButton::Right => EnigoMouseButton::Right,
-            MouseButton::Back => EnigoMouseButton::Back,
-            MouseButton::Forward => EnigoMouseButton::Forward,
-        }
-    }
-}
-
 crate_impls! { MouseButton }
 
 impl EmulateAbsoluteValue for MouseButton {
@@ -885,9 +611,9 @@ impl EmulateAbsoluteValue for MouseButton {
 
     fn change_to(&self, to: Self::Value) -> &Self {
         if to {
-            Enigo.mouse_down(self.as_enigo());
+            get_mouse_backend().mouse_down(self);
         } else {
-            Enigo.mouse_up(self.as_enigo());
+            get_mouse_backend().mouse_up(self);
         }
         self
     }
@@ -896,19 +622,13 @@ impl EmulateAbsoluteValue for MouseButton {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct MousePosition;
 
-impl MousePosition {
-    pub fn get() -> (i32, i32) {
-        Enigo.mouse_location()
-    }
-}
-
 crate_impls! { MousePosition }
 
 impl EmulateAbsoluteValue for MousePosition {
     type Value = (i32, i32);
 
-    fn change_to(&self, by: Self::Value) -> &Self {
-        Enigo.mouse_move_to(by.0, by.1);
+    fn change_to(&self, to: Self::Value) -> &Self {
+        get_mouse_backend().mouse_move_to(to.0, to.1);
         self
     }
 }
@@ -917,7 +637,7 @@ impl EmulateRelativeValue for MousePosition {
     type Value = (i32, i32);
 
     fn change_by(&self, by: Self::Value) -> &Self {
-        Enigo.mouse_move_relative(by.0, by.1);
+        get_mouse_backend().mouse_move_by(by.0, by.1);
         self
     }
 }
@@ -931,8 +651,7 @@ impl EmulateRelativeValue for MouseScroll {
     type Value = (i32, i32);
 
     fn change_by(&self, by: Self::Value) -> &Self {
-        Enigo.mouse_scroll_x(by.0);
-        Enigo.mouse_scroll_y(by.1);
+        get_mouse_backend().mouse_scroll(by.0, by.1);
         self
     }
 }
