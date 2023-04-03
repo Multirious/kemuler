@@ -6,6 +6,39 @@ use enigo::{
 
 use super::{KeyboardBackend, MouseBackend};
 
+impl MouseBackend for Enigo {
+    fn mouse_move_to(&self, x: i32, y: i32) {
+        MouseControllable::mouse_move_to(&mut Enigo, x, y);
+    }
+
+    fn mouse_move_by(&self, x: i32, y: i32) {
+        MouseControllable::mouse_move_relative(&mut Enigo, x, y);
+    }
+
+    fn mouse_scroll(&self, x: i32, y: i32) {
+        MouseControllable::mouse_scroll_x(&mut Enigo, x);
+        MouseControllable::mouse_scroll_y(&mut Enigo, y);
+    }
+
+    fn mouse_down(&self, button: &MouseButton) {
+        MouseControllable::mouse_down(&mut Enigo, mouse_button_as_enigo(button));
+    }
+
+    fn mouse_up(&self, button: &MouseButton) {
+        MouseControllable::mouse_up(&mut Enigo, mouse_button_as_enigo(button));
+    }
+}
+
+impl KeyboardBackend for Enigo {
+    fn key_down(&self, key: &Keyboard) {
+        KeyboardControllable::key_down(&mut Enigo, keyboard_as_enigo(key));
+    }
+
+    fn key_up(&self, key: &Keyboard) {
+        KeyboardControllable::key_up(&mut Enigo, keyboard_as_enigo(key));
+    }
+}
+
 fn keyboard_as_enigo(keyboard: &Keyboard) -> EnigoKey {
     match keyboard {
         Keyboard::Num0 => EnigoKey::Num0,
@@ -269,38 +302,5 @@ fn mouse_button_as_enigo(mouse_button: &MouseButton) -> EnigoMouseButton {
         MouseButton::Right => EnigoMouseButton::Right,
         MouseButton::Back => EnigoMouseButton::Back,
         MouseButton::Forward => EnigoMouseButton::Forward,
-    }
-}
-
-impl MouseBackend for Enigo {
-    fn mouse_move_to(&self, x: i32, y: i32) {
-        MouseControllable::mouse_move_to(&mut Enigo, x, y);
-    }
-
-    fn mouse_move_by(&self, x: i32, y: i32) {
-        MouseControllable::mouse_move_relative(&mut Enigo, x, y);
-    }
-
-    fn mouse_scroll(&self, x: i32, y: i32) {
-        MouseControllable::mouse_scroll_x(&mut Enigo, x);
-        MouseControllable::mouse_scroll_y(&mut Enigo, y);
-    }
-
-    fn mouse_down(&self, button: &MouseButton) {
-        MouseControllable::mouse_down(&mut Enigo, mouse_button_as_enigo(button));
-    }
-
-    fn mouse_up(&self, button: &MouseButton) {
-        MouseControllable::mouse_up(&mut Enigo, mouse_button_as_enigo(button));
-    }
-}
-
-impl KeyboardBackend for Enigo {
-    fn key_down(&self, key: &Keyboard) {
-        KeyboardControllable::key_down(&mut Enigo, keyboard_as_enigo(key));
-    }
-
-    fn key_up(&self, key: &Keyboard) {
-        KeyboardControllable::key_up(&mut Enigo, keyboard_as_enigo(key));
     }
 }
