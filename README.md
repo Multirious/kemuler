@@ -2,7 +2,7 @@
 
 Experimental high level input emultation library.
 
-This library experimentally use unified traits to tie all the functionally together.
+This library use unified traits to tie all the functionally together.
 Has method channing and other trick and combinator to make complex stuff easier.
 
 Has support for switchable backend

@@ -28,7 +28,7 @@ impl IntoDuration for u64 {
     }
 }
 
-pub trait ControlFlow {
+pub trait QuickControlFlow {
     fn wait<D: IntoDuration>(&self, duration: D) -> &Self {
         wait(duration);
         self
@@ -39,4 +39,4 @@ pub fn wait<D: IntoDuration>(duration: D) {
     std::thread::sleep(duration.into_duration());
 }
 
-impl<T> ControlFlow for T {}
+impl<T> QuickControlFlow for T {}

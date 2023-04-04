@@ -7,7 +7,7 @@ pub mod prelude {
     use super::*;
 
     pub use combinator::Combine;
-    pub use control_flow::{ControlFlow, IntoDuration};
+    pub use control_flow::IntoDuration;
     pub use emulatable::{EmulateAbsoluteValue, EmulateBinaryState, EmulateRelativeValue};
-    pub use peripherals::{KeyCommon, MouseButton, MousePosition, MouseScroll};
+    pub use peripherals::{KeyCommon, KeyLayout, MouseButton, MousePosition, MouseScroll};
 }
