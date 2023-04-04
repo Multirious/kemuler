@@ -1,4 +1,4 @@
-use crate::peripherals::{KeyboardCommon, KeyboardLayout, MouseButton};
+use crate::peripherals::{KeyCommon, KeyLayout, MouseButton};
 use enigo::{
     Enigo as OriginalEnigo, Key as EnigoKey, KeyboardControllable, MouseButton as EnigoMouseButton,
     MouseControllable,
@@ -31,102 +31,104 @@ impl MouseBackend for General {
     }
 }
 
-impl KeyboardBackend<KeyboardCommon> for General {
-    fn key_down(&self, key: KeyboardCommon) {
+impl KeyboardBackend<KeyCommon> for General {
+    fn key_down(&self, key: KeyCommon) {
         KeyboardControllable::key_down(&mut OriginalEnigo, keyboard_common_as_enigo(key));
     }
 
-    fn key_up(&self, key: KeyboardCommon) {
+    fn key_up(&self, key: KeyCommon) {
         KeyboardControllable::key_up(&mut OriginalEnigo, keyboard_common_as_enigo(key));
     }
 }
 
-impl KeyboardBackend<KeyboardLayout> for General {
-    fn key_down(&self, key: KeyboardLayout) {
+impl KeyboardBackend<KeyLayout> for General {
+    fn key_down(&self, key: KeyLayout) {
         KeyboardControllable::key_down(&mut OriginalEnigo, keyboard_layout_as_enigo(key));
     }
 
-    fn key_up(&self, key: KeyboardLayout) {
+    fn key_up(&self, key: KeyLayout) {
         KeyboardControllable::key_up(&mut OriginalEnigo, keyboard_layout_as_enigo(key));
     }
 }
 
-fn keyboard_layout_as_enigo(keyboard: KeyboardLayout) -> EnigoKey {
+fn keyboard_layout_as_enigo(keyboard: KeyLayout) -> EnigoKey {
     EnigoKey::Layout(keyboard.0)
 }
 
-fn keyboard_common_as_enigo(keyboard: KeyboardCommon) -> EnigoKey {
+fn keyboard_common_as_enigo(keyboard: KeyCommon) -> EnigoKey {
     match keyboard {
-        KeyboardCommon::A => EnigoKey::A,
-        KeyboardCommon::B => EnigoKey::B,
-        KeyboardCommon::C => EnigoKey::C,
-        KeyboardCommon::D => EnigoKey::D,
-        KeyboardCommon::E => EnigoKey::E,
-        KeyboardCommon::F => EnigoKey::F,
-        KeyboardCommon::G => EnigoKey::G,
-        KeyboardCommon::H => EnigoKey::H,
-        KeyboardCommon::I => EnigoKey::I,
-        KeyboardCommon::J => EnigoKey::J,
-        KeyboardCommon::K => EnigoKey::K,
-        KeyboardCommon::L => EnigoKey::L,
-        KeyboardCommon::M => EnigoKey::M,
-        KeyboardCommon::N => EnigoKey::N,
-        KeyboardCommon::O => EnigoKey::O,
-        KeyboardCommon::P => EnigoKey::P,
-        KeyboardCommon::Q => EnigoKey::Q,
-        KeyboardCommon::R => EnigoKey::R,
-        KeyboardCommon::S => EnigoKey::S,
-        KeyboardCommon::T => EnigoKey::T,
-        KeyboardCommon::U => EnigoKey::U,
-        KeyboardCommon::V => EnigoKey::V,
-        KeyboardCommon::W => EnigoKey::W,
-        KeyboardCommon::X => EnigoKey::X,
-        KeyboardCommon::Y => EnigoKey::Y,
-        KeyboardCommon::Z => EnigoKey::Z,
-        KeyboardCommon::Num0 => EnigoKey::Num0,
-        KeyboardCommon::Num1 => EnigoKey::Num1,
-        KeyboardCommon::Num2 => EnigoKey::Num2,
-        KeyboardCommon::Num3 => EnigoKey::Num3,
-        KeyboardCommon::Num4 => EnigoKey::Num4,
-        KeyboardCommon::Num5 => EnigoKey::Num5,
-        KeyboardCommon::Num6 => EnigoKey::Num6,
-        KeyboardCommon::Num7 => EnigoKey::Num7,
-        KeyboardCommon::Num8 => EnigoKey::Num8,
-        KeyboardCommon::Num9 => EnigoKey::Num9,
-        KeyboardCommon::Alt => EnigoKey::Alt,
-        KeyboardCommon::Shift => EnigoKey::Shift,
-        KeyboardCommon::RShift => EnigoKey::RShift,
-        KeyboardCommon::LShift => EnigoKey::LShift,
-        KeyboardCommon::Control => EnigoKey::Control,
-        KeyboardCommon::RControl => EnigoKey::RControl,
-        KeyboardCommon::LControl => EnigoKey::LControl,
-        KeyboardCommon::F1 => EnigoKey::F1,
-        KeyboardCommon::F2 => EnigoKey::F2,
-        KeyboardCommon::F3 => EnigoKey::F3,
-        KeyboardCommon::F4 => EnigoKey::F4,
-        KeyboardCommon::F5 => EnigoKey::F5,
-        KeyboardCommon::F6 => EnigoKey::F6,
-        KeyboardCommon::F7 => EnigoKey::F7,
-        KeyboardCommon::F8 => EnigoKey::F8,
-        KeyboardCommon::F9 => EnigoKey::F9,
-        KeyboardCommon::F10 => EnigoKey::F10,
-        KeyboardCommon::F11 => EnigoKey::F11,
-        KeyboardCommon::F12 => EnigoKey::F12,
-        KeyboardCommon::CapsLock => EnigoKey::CapsLock,
-        KeyboardCommon::End => EnigoKey::End,
-        KeyboardCommon::Home => EnigoKey::Home,
-        KeyboardCommon::PageUp => EnigoKey::PageUp,
-        KeyboardCommon::PageDown => EnigoKey::PageDown,
-        KeyboardCommon::Escape => EnigoKey::Escape,
-        KeyboardCommon::Return => EnigoKey::Return,
-        KeyboardCommon::Space => EnigoKey::Space,
-        KeyboardCommon::Tab => EnigoKey::Tab,
-        KeyboardCommon::Backspace => EnigoKey::Backspace,
-        KeyboardCommon::Delete => EnigoKey::Delete,
-        KeyboardCommon::UpArrow => EnigoKey::UpArrow,
-        KeyboardCommon::DownArrow => EnigoKey::DownArrow,
-        KeyboardCommon::LeftArrow => EnigoKey::LeftArrow,
-        KeyboardCommon::RightArrow => EnigoKey::RightArrow,
+        KeyCommon::A => EnigoKey::A,
+        KeyCommon::B => EnigoKey::B,
+        KeyCommon::C => EnigoKey::C,
+        KeyCommon::D => EnigoKey::D,
+        KeyCommon::E => EnigoKey::E,
+        KeyCommon::F => EnigoKey::F,
+        KeyCommon::G => EnigoKey::G,
+        KeyCommon::H => EnigoKey::H,
+        KeyCommon::I => EnigoKey::I,
+        KeyCommon::J => EnigoKey::J,
+        KeyCommon::K => EnigoKey::K,
+        KeyCommon::L => EnigoKey::L,
+        KeyCommon::M => EnigoKey::M,
+        KeyCommon::N => EnigoKey::N,
+        KeyCommon::O => EnigoKey::O,
+        KeyCommon::P => EnigoKey::P,
+        KeyCommon::Q => EnigoKey::Q,
+        KeyCommon::R => EnigoKey::R,
+        KeyCommon::S => EnigoKey::S,
+        KeyCommon::T => EnigoKey::T,
+        KeyCommon::U => EnigoKey::U,
+        KeyCommon::V => EnigoKey::V,
+        KeyCommon::W => EnigoKey::W,
+        KeyCommon::X => EnigoKey::X,
+        KeyCommon::Y => EnigoKey::Y,
+        KeyCommon::Z => EnigoKey::Z,
+        KeyCommon::Num0 => EnigoKey::Num0,
+        KeyCommon::Num1 => EnigoKey::Num1,
+        KeyCommon::Num2 => EnigoKey::Num2,
+        KeyCommon::Num3 => EnigoKey::Num3,
+        KeyCommon::Num4 => EnigoKey::Num4,
+        KeyCommon::Num5 => EnigoKey::Num5,
+        KeyCommon::Num6 => EnigoKey::Num6,
+        KeyCommon::Num7 => EnigoKey::Num7,
+        KeyCommon::Num8 => EnigoKey::Num8,
+        KeyCommon::Num9 => EnigoKey::Num9,
+        KeyCommon::Alt => EnigoKey::Alt,
+        KeyCommon::LAlt => EnigoKey::Alt,
+        KeyCommon::RAlt => EnigoKey::Alt,
+        KeyCommon::Shift => EnigoKey::Shift,
+        KeyCommon::RShift => EnigoKey::RShift,
+        KeyCommon::LShift => EnigoKey::LShift,
+        KeyCommon::Control => EnigoKey::Control,
+        KeyCommon::RControl => EnigoKey::RControl,
+        KeyCommon::LControl => EnigoKey::LControl,
+        KeyCommon::F1 => EnigoKey::F1,
+        KeyCommon::F2 => EnigoKey::F2,
+        KeyCommon::F3 => EnigoKey::F3,
+        KeyCommon::F4 => EnigoKey::F4,
+        KeyCommon::F5 => EnigoKey::F5,
+        KeyCommon::F6 => EnigoKey::F6,
+        KeyCommon::F7 => EnigoKey::F7,
+        KeyCommon::F8 => EnigoKey::F8,
+        KeyCommon::F9 => EnigoKey::F9,
+        KeyCommon::F10 => EnigoKey::F10,
+        KeyCommon::F11 => EnigoKey::F11,
+        KeyCommon::F12 => EnigoKey::F12,
+        KeyCommon::CapsLock => EnigoKey::CapsLock,
+        KeyCommon::End => EnigoKey::End,
+        KeyCommon::Home => EnigoKey::Home,
+        KeyCommon::PageUp => EnigoKey::PageUp,
+        KeyCommon::PageDown => EnigoKey::PageDown,
+        KeyCommon::Escape => EnigoKey::Escape,
+        KeyCommon::Return => EnigoKey::Return,
+        KeyCommon::Space => EnigoKey::Space,
+        KeyCommon::Tab => EnigoKey::Tab,
+        KeyCommon::Backspace => EnigoKey::Backspace,
+        KeyCommon::Delete => EnigoKey::Delete,
+        KeyCommon::UpArrow => EnigoKey::UpArrow,
+        KeyCommon::DownArrow => EnigoKey::DownArrow,
+        KeyCommon::LeftArrow => EnigoKey::LeftArrow,
+        KeyCommon::RightArrow => EnigoKey::RightArrow,
     }
 }
 
@@ -135,7 +137,7 @@ fn mouse_button_as_enigo(mouse_button: MouseButton) -> EnigoMouseButton {
         MouseButton::Left => EnigoMouseButton::Left,
         MouseButton::Middle => EnigoMouseButton::Middle,
         MouseButton::Right => EnigoMouseButton::Right,
-        MouseButton::Back => EnigoMouseButton::Back,
-        MouseButton::Forward => EnigoMouseButton::Forward,
+        MouseButton::X1 => EnigoMouseButton::Back,
+        MouseButton::X2 => EnigoMouseButton::Forward,
     }
 }

@@ -22,7 +22,7 @@ where
 {
     type Value = V;
 
-    fn change_to(&self, to: Self::Value) -> &Self {
+    fn change_to(&mut self, to: Self::Value) -> &mut Self {
         self.0.change_to(to.clone());
         self.1.change_to(to);
         self
@@ -37,7 +37,7 @@ where
 {
     type Value = V;
 
-    fn change_by(&self, by: Self::Value) -> &Self {
+    fn change_by(&mut self, by: Self::Value) -> &mut Self {
         self.0.change_by(by.clone());
         self.1.change_by(by);
         self

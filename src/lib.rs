@@ -9,5 +9,5 @@ pub mod prelude {
     pub use combinator::Combine;
     pub use control_flow::{ControlFlow, IntoDuration};
     pub use emulatable::{EmulateAbsoluteValue, EmulateBinaryState, EmulateRelativeValue};
-    pub use peripherals::{KeyboardCommon, MouseButton, MousePosition, MouseScroll};
+    pub use peripherals::{KeyCommon, MouseButton, MousePosition, MouseScroll};
 }

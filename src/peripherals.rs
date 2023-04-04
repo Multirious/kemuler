@@ -1,5 +1,5 @@
 use crate::{
-    backend::{get_keyboard_backend, get_mouse_backend},
+    backend::{get_keyboard_common_backend, get_mouse_backend},
     combinator::Combine,
     emulatable::{EmulateAbsoluteValue, EmulateRelativeValue},
 };
@@ -21,7 +21,7 @@ macro_rules! crate_impls {
 /// Layout independent key
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum KeyboardCommon {
+pub enum KeyCommon {
     A,
     B,
     C,
@@ -62,12 +62,14 @@ pub enum KeyboardCommon {
 
     /// alt key on Linux and Windows (option key on macOS)
     Alt,
+    LAlt,
+    RAlt,
     Shift,
-    RShift,
     LShift,
+    RShift,
     Control,
-    RControl,
     LControl,
+    RControl,
 
     F1,
     F2,
@@ -541,22 +543,23 @@ pub enum KeyboardCommon {
 }
 
 /// Layout dependent key
-pub struct KeyboardLayout(pub char);
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct KeyLayout(pub char);
 
-impl EmulateAbsoluteValue for KeyboardCommon {
+impl EmulateAbsoluteValue for KeyCommon {
     type Value = bool;
 
-    fn change_to(&self, to: Self::Value) -> &Self {
+    fn change_to(&mut self, to: Self::Value) -> &mut Self {
         if to {
-            get_keyboard_backend().key_down(self);
+            get_keyboard_common_backend().key_down(*self);
         } else {
-            get_keyboard_backend().key_up(self);
+            get_keyboard_common_backend().key_up(*self);
         }
         self
     }
 }
 
-crate_impls! { KeyboardCommon }
+crate_impls! { KeyCommon }
 
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -564,8 +567,8 @@ pub enum MouseButton {
     Left,
     Middle,
     Right,
-    Back,
-    Forward,
+    X1,
+    X2,
 }
 
 crate_impls! { MouseButton }
@@ -573,11 +576,11 @@ crate_impls! { MouseButton }
 impl EmulateAbsoluteValue for MouseButton {
     type Value = bool;
 
-    fn change_to(&self, to: Self::Value) -> &Self {
+    fn change_to(&mut self, to: Self::Value) -> &mut Self {
         if to {
-            get_mouse_backend().mouse_down(self);
+            get_mouse_backend().mouse_down(*self);
         } else {
-            get_mouse_backend().mouse_up(self);
+            get_mouse_backend().mouse_up(*self);
         }
         self
     }
@@ -591,7 +594,7 @@ crate_impls! { MousePosition }
 impl EmulateAbsoluteValue for MousePosition {
     type Value = (i32, i32);
 
-    fn change_to(&self, to: Self::Value) -> &Self {
+    fn change_to(&mut self, to: Self::Value) -> &mut Self {
         get_mouse_backend().mouse_move_to(to.0, to.1);
         self
     }
@@ -600,7 +603,7 @@ impl EmulateAbsoluteValue for MousePosition {
 impl EmulateRelativeValue for MousePosition {
     type Value = (i32, i32);
 
-    fn change_by(&self, by: Self::Value) -> &Self {
+    fn change_by(&mut self, by: Self::Value) -> &mut Self {
         get_mouse_backend().mouse_move_by(by.0, by.1);
         self
     }
@@ -614,7 +617,7 @@ crate_impls! { MouseScroll }
 impl EmulateRelativeValue for MouseScroll {
     type Value = (i32, i32);
 
-    fn change_by(&self, by: Self::Value) -> &Self {
+    fn change_by(&mut self, by: Self::Value) -> &mut Self {
         get_mouse_backend().mouse_scroll(by.0, by.1);
         self
     }

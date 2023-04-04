@@ -1,15 +1,15 @@
 use once_cell::sync::Lazy;
 use std::sync::{RwLock, RwLockReadGuard};
 
-use crate::peripherals::{KeyboardCommon, KeyboardLayout, MouseButton};
+use crate::peripherals::{KeyCommon, KeyLayout, MouseButton};
 
 use self::default::DefaultBackend;
 
-mod default;
+pub mod default;
 #[cfg(feature = "enigo")]
-mod enigo;
-#[cfg(feature = "rdev")]
-mod rdev;
+pub mod enigo;
+#[cfg(feature = "inputbot")]
+pub mod inputbot;
 
 pub trait MouseBackend {
     fn mouse_move_to(&self, x: i32, y: i32);
@@ -27,25 +27,39 @@ pub trait KeyboardBackend<K> {
 type StaticBackend<T> = Lazy<RwLock<Box<T>>>;
 type BackendRead<T> = RwLockReadGuard<'static, Box<T>>;
 
-static MOUSE_BACKEND: StaticBackend<dyn MouseBackend + Send + Sync> =
-    Lazy::new(|| RwLock::new(Box::new(DefaultBackend)));
-static KEYBOARD_COMMON_BACKEND: StaticBackend<dyn KeyboardBackend<KeyboardCommon> + Send + Sync> =
-    Lazy::new(|| RwLock::new(Box::new(DefaultBackend)));
-static KEYBOARD_LAYOUT_BACKEND: StaticBackend<dyn KeyboardBackend<KeyboardLayout> + Send + Sync> =
-    Lazy::new(|| RwLock::new(Box::new(DefaultBackend)));
+macro_rules! define_backend_static {
+    (
+        $(
+        static $static_ident:ident: $trait:ty;
+        pub fn $fn_get:ident();
+        pub fn $fn_set:ident();
+        )*
+    ) => {
+        $(
+            static $static_ident: StaticBackend<$trait> =
+                Lazy::new(|| RwLock::new(Box::new(DefaultBackend)));
 
-pub fn get_mouse_backend() -> BackendRead<dyn MouseBackend + Send + Sync> {
-    MOUSE_BACKEND.read().unwrap()
+            pub fn $fn_get() -> BackendRead<$trait> {
+                $static_ident.read().unwrap()
+            }
+
+            pub fn $fn_set(backend: Box<$trait>) {
+                *$static_ident.write().unwrap() = backend;
+            }
+        )*
+    };
 }
 
-pub fn set_mouse_backend(backend: Box<(dyn MouseBackend + Send + Sync)>) {
-    *MOUSE_BACKEND.write().unwrap() = backend;
-}
+define_backend_static! {
+    static MOUSE_BACKEND: dyn MouseBackend + Send + Sync;
+    pub fn get_mouse_backend();
+    pub fn set_mouse_backend();
 
-pub fn get_keyboard_backend() -> BackendRead<(dyn KeyboardBackend<KeyboardCommon> + Send + Sync)> {
-    KEYBOARD_COMMON_BACKEND.read().unwrap()
-}
+    static KEYBOARD_COMMON_BACKEND: dyn KeyboardBackend<KeyCommon> + Send + Sync;
+    pub fn get_keyboard_common_backend();
+    pub fn set_keyboard_common_backend();
 
-pub fn set_keyboard_backend(backend: Box<dyn KeyboardBackend<KeyboardCommon> + Send + Sync>) {
-    *KEYBOARD_COMMON_BACKEND.write().unwrap() = backend;
+    static KEYBOARD_LAYOUT_BACKEND: dyn KeyboardBackend<KeyLayout> + Send + Sync;
+    pub fn get_keyboard_layout_backend();
+    pub fn set_keyboard_layout_backend();
 }

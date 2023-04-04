@@ -1,4 +1,4 @@
-use crate::peripherals::{KeyboardCommon, KeyboardLayout, MouseButton};
+use crate::peripherals::{KeyCommon, KeyLayout, MouseButton};
 
 use super::{KeyboardBackend, MouseBackend};
 
@@ -29,22 +29,22 @@ cfg_if::cfg_if! {
             }
         }
 
-        impl KeyboardBackend<KeyboardCommon> for DefaultBackend {
-            fn key_down(&self, key: KeyboardCommon) {
+        impl KeyboardBackend<KeyCommon> for DefaultBackend {
+            fn key_down(&self, key: KeyCommon) {
                 enigo::General.key_down(key);
             }
 
-            fn key_up(&self, key: KeyboardCommon) {
+            fn key_up(&self, key: KeyCommon) {
                 enigo::General.key_up(key);
             }
         }
 
-        impl KeyboardBackend<KeyboardLayout> for DefaultBackend {
-            fn key_down(&self, key: KeyboardLayout) {
+        impl KeyboardBackend<KeyLayout> for DefaultBackend {
+            fn key_down(&self, key: KeyLayout) {
                 enigo::General.key_down(key);
             }
 
-            fn key_up(&self, key: KeyboardLayout) {
+            fn key_up(&self, key: KeyLayout) {
                 enigo::General.key_up(key);
             }
         }
@@ -71,22 +71,22 @@ cfg_if::cfg_if! {
             }
         }
 
-        impl KeyboardBackend<KeyboardCommon> for DefaultBackend {
-            fn key_down(&self, key: KeyboardCommon) {
+        impl KeyboardBackend<KeyCommon> for DefaultBackend {
+            fn key_down(&self, key: KeyCommon) {
                 panic!("No default keyboard common input implementation")
             }
 
-            fn key_up(&self, key: KeyboardCommon) {
+            fn key_up(&self, key: KeyCommon) {
                 panic!("No default keyboard common input implementation")
             }
         }
 
-        impl KeyboardBackend<KeyboardLayout> for DefaultBackend {
-            fn key_down(&self, key: KeyboardLayout) {
+        impl KeyboardBackend<KeyLayout> for DefaultBackend {
+            fn key_down(&self, key: KeyLayout) {
                 panic!("No default keyboard layout input implementation")
             }
 
-            fn key_up(&self, key: KeyboardLayout) {
+            fn key_up(&self, key: KeyLayout) {
                 panic!("No default keyboard layout input implementation")
             }
         }
