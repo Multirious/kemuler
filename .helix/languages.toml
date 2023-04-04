@@ -2,5 +2,7 @@
 name = "rust"
 
 [language.config]
-cargo = { features = ["all"] }
-checkOnSave = { features = ["all"] }
+# cargo.features = "all"
+# checkOnSave = { features = ["all"] }
+# check.features = "all"
+# server.extraEnv = { RA_LOG = "rust_analyzer=info", RA_LOG_FILE = "C:/ra_log.txt" }
