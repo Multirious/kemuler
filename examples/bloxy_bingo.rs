@@ -25,28 +25,44 @@ impl Window {
         })
     }
 
-    fn windows() -> WindowsResult<Vec<WindowsHWND>> {
+    fn get_windows() -> WindowsResult<Vec<WindowsHWND>> {
+        type PanicResult<T> = Result<T, Box<dyn std::any::Any + Send>>;
+
         unsafe extern "system" fn enum_windows_callback(
             handle: WindowsHWND,
             vec: WindowsLparam,
         ) -> WindowsBool {
-            let vec: *mut Vec<WindowsHWND> = vec.0 as _;
-            unsafe {
-                (*vec).push(handle);
+            let vec: *mut PanicResult<Vec<WindowsHWND>> = vec.0 as _;
+            let vec: &mut _ = &mut *vec;
+            let res = {
+                let vec = vec.as_mut().unwrap();
+                let mut vec = std::panic::AssertUnwindSafe(vec);
+                std::panic::catch_unwind(move || vec.push(handle))
+            };
+            match res {
+                Ok(()) => WindowsBool::from(true),
+                Err(e) => {
+                    *vec = Err(e);
+                    WindowsBool::from(false)
+                }
             }
-            WindowsBool::from(true)
         }
 
-        let mut vec: Vec<WindowsHWND> = vec![];
+        // Should error if vec capacity reached `isize::MAX`
+        let mut vec: PanicResult<Vec<WindowsHWND>> = Ok(vec![]);
 
-        unsafe {
+        let res = unsafe {
             windows::Win32::UI::WindowsAndMessaging::EnumWindows(
                 Some(enum_windows_callback),
                 WindowsLparam(&mut vec as *mut _ as isize),
             )
         }
-        .ok()
-        .map(|_| vec)
+        .ok();
+        let vec = match vec {
+            Ok(o) => o,
+            Err(e) => std::panic::resume_unwind(e),
+        };
+        res.map(|_| vec)
     }
 
     fn window_process_thread_id(window: &WindowsHWND) -> WindowsResult<(u32, u32)> {
