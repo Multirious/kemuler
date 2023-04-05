@@ -1,10 +1,10 @@
-use crate::simulate::{KeyCommon, KeyLayout, MouseButton};
+use super::*;
+
+use ::enigo;
 use enigo::{
     Enigo as OriginalEnigo, Key as EnigoKey, KeyboardControllable, MouseButton as EnigoMouseButton,
     MouseControllable,
 };
-
-use super::{KeyboardBackend, MouseBackend};
 
 pub struct General;
 

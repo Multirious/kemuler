@@ -6,6 +6,8 @@ use crate::simulate::{KeyCommon, KeyLayout, MouseButton};
 use self::default::DefaultBackend;
 
 pub mod default;
+#[cfg(feature = "directx")]
+pub mod directx;
 #[cfg(feature = "enigo")]
 pub mod enigo;
 #[cfg(feature = "inputbot")]
