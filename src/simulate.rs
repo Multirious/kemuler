@@ -1,8 +1,45 @@
+use crate::control_flow::IntoDuration;
 use crate::{
     backend::{get_keyboard_common_backend, get_mouse_backend},
     combinator::Combine,
-    emulatable::{EmulateAbsoluteValue, EmulateRelativeValue},
 };
+
+pub trait SimulateBinaryState: SimulateAbsoluteValue<Value = bool> {
+    fn activate(&mut self) -> &mut Self {
+        self.change_to(true);
+        self
+    }
+
+    fn deactivate(&mut self) -> &mut Self {
+        self.change_to(false);
+        self
+    }
+
+    fn pulse(&mut self) -> &mut Self {
+        self.activate();
+        self.deactivate();
+        self
+    }
+
+    fn pulse_for<D: IntoDuration>(&mut self, duration: D) -> &mut Self {
+        self.activate();
+        std::thread::sleep(duration.into_duration());
+        self.deactivate();
+        self
+    }
+}
+
+impl<T: SimulateAbsoluteValue<Value = bool>> SimulateBinaryState for T {}
+
+pub trait SimulateAbsoluteValue {
+    type Value;
+    fn change_to(&mut self, to: Self::Value) -> &mut Self;
+}
+
+pub trait SimulateRelativeValue {
+    type Value;
+    fn change_by(&mut self, by: Self::Value) -> &mut Self;
+}
 
 macro_rules! crate_impls {
     ($thing:ident) => {
@@ -546,7 +583,7 @@ pub enum KeyCommon {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct KeyLayout(pub char);
 
-impl EmulateAbsoluteValue for KeyCommon {
+impl SimulateAbsoluteValue for KeyCommon {
     type Value = bool;
 
     fn change_to(&mut self, to: Self::Value) -> &mut Self {
@@ -573,7 +610,7 @@ pub enum MouseButton {
 
 crate_impls! { MouseButton }
 
-impl EmulateAbsoluteValue for MouseButton {
+impl SimulateAbsoluteValue for MouseButton {
     type Value = bool;
 
     fn change_to(&mut self, to: Self::Value) -> &mut Self {
@@ -591,7 +628,7 @@ pub struct MousePosition;
 
 crate_impls! { MousePosition }
 
-impl EmulateAbsoluteValue for MousePosition {
+impl SimulateAbsoluteValue for MousePosition {
     type Value = (i32, i32);
 
     fn change_to(&mut self, to: Self::Value) -> &mut Self {
@@ -600,7 +637,7 @@ impl EmulateAbsoluteValue for MousePosition {
     }
 }
 
-impl EmulateRelativeValue for MousePosition {
+impl SimulateRelativeValue for MousePosition {
     type Value = (i32, i32);
 
     fn change_by(&mut self, by: Self::Value) -> &mut Self {
@@ -614,7 +651,7 @@ pub struct MouseScroll;
 
 crate_impls! { MouseScroll }
 
-impl EmulateRelativeValue for MouseScroll {
+impl SimulateRelativeValue for MouseScroll {
     type Value = (i32, i32);
 
     fn change_by(&mut self, by: Self::Value) -> &mut Self {

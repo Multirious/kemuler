@@ -1,7 +1,7 @@
 use once_cell::sync::Lazy;
 use std::sync::{RwLock, RwLockReadGuard};
 
-use crate::peripherals::{KeyCommon, KeyLayout, MouseButton};
+use crate::simulate::{KeyCommon, KeyLayout, MouseButton};
 
 use self::default::DefaultBackend;
 

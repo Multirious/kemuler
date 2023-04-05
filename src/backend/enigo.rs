@@ -1,4 +1,4 @@
-use crate::peripherals::{KeyCommon, KeyLayout, MouseButton};
+use crate::simulate::{KeyCommon, KeyLayout, MouseButton};
 use enigo::{
     Enigo as OriginalEnigo, Key as EnigoKey, KeyboardControllable, MouseButton as EnigoMouseButton,
     MouseControllable,

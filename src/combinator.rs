@@ -1,4 +1,4 @@
-use crate::emulatable::{EmulateAbsoluteValue, EmulateRelativeValue};
+use crate::simulate::{SimulateAbsoluteValue, SimulateRelativeValue};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct And<A, B>(pub A, pub B);
@@ -14,10 +14,10 @@ pub trait Combine {
 
 impl<A, B> Combine for And<A, B> {}
 
-impl<V, A, B> EmulateAbsoluteValue for And<A, B>
+impl<V, A, B> SimulateAbsoluteValue for And<A, B>
 where
-    A: EmulateAbsoluteValue<Value = V>,
-    B: EmulateAbsoluteValue<Value = V>,
+    A: SimulateAbsoluteValue<Value = V>,
+    B: SimulateAbsoluteValue<Value = V>,
     V: Clone,
 {
     type Value = V;
@@ -29,10 +29,10 @@ where
     }
 }
 
-impl<V, A, B> EmulateRelativeValue for And<A, B>
+impl<V, A, B> SimulateRelativeValue for And<A, B>
 where
-    A: EmulateRelativeValue<Value = V>,
-    B: EmulateRelativeValue<Value = V>,
+    A: SimulateRelativeValue<Value = V>,
+    B: SimulateRelativeValue<Value = V>,
     V: Clone,
 {
     type Value = V;

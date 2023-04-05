@@ -1,4 +1,4 @@
-use crate::peripherals::{KeyCommon, KeyLayout, MouseButton};
+use crate::simulate::{KeyCommon, KeyLayout, MouseButton};
 
 use super::{KeyboardBackend, MouseBackend};
 
