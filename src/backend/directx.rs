@@ -1,21 +1,43 @@
 use super::*;
 use std::mem::size_of;
-use windows::{
-    self,
-    Win32::UI::{Input::KeyboardAndMouse, WindowsAndMessaging},
-};
+use windows::Win32::UI::WindowsAndMessaging;
+use windows::{self, Win32::UI::Input::KeyboardAndMouse};
 
 // Thanks solutation from https://stackoverflow.com/questions/35138778/sending-keys-to-a-directx-game
+
+fn get_cursor_position() -> Option<(i32, i32)> {
+    let mut pos = windows::Win32::Foundation::POINT { x: 0, y: 0 };
+    let res = unsafe { WindowsAndMessaging::GetCursorPos(&mut pos) };
+    if res.as_bool() {
+        Some((pos.x, pos.y))
+    } else {
+        None
+    }
+}
+
+fn set_cursor_position(x: i32, y: i32) {
+    unsafe { WindowsAndMessaging::SetCursorPos(x, y) };
+}
 
 pub struct General;
 
 impl MouseBackend for General {
     fn mouse_move_to(&self, x: i32, y: i32) {
+        set_cursor_position(x, y);
         send_input(&[WindowsSendInputEnum::Mouse {
-            dx: x,
-            dy: y,
+            dx: 1,
+            dy: 0,
             mouseData: 0,
-            dwFlags: KeyboardAndMouse::MOUSEEVENTF_MOVE | KeyboardAndMouse::MOUSEEVENTF_ABSOLUTE,
+            dwFlags: KeyboardAndMouse::MOUSEEVENTF_MOVE,
+            time: 0,
+            dwExtraInfo: get_message_extra_info(),
+        }
+        .into_windows()]);
+        send_input(&[WindowsSendInputEnum::Mouse {
+            dx: -1,
+            dy: 0,
+            mouseData: 0,
+            dwFlags: KeyboardAndMouse::MOUSEEVENTF_MOVE,
             time: 0,
             dwExtraInfo: get_message_extra_info(),
         }
@@ -23,15 +45,10 @@ impl MouseBackend for General {
     }
 
     fn mouse_move_by(&self, x: i32, y: i32) {
-        send_input(&[WindowsSendInputEnum::Mouse {
-            dx: x,
-            dy: y,
-            mouseData: 0,
-            dwFlags: KeyboardAndMouse::MOUSEEVENTF_MOVE,
-            time: 0,
-            dwExtraInfo: get_message_extra_info(),
+        match get_cursor_position() {
+            Some((cx, cy)) => self.mouse_move_to(cx + x, cy + y),
+            None => {}
         }
-        .into_windows()]);
     }
 
     fn mouse_scroll(&self, x: i32, y: i32) {
