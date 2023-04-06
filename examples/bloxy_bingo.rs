@@ -1,3 +1,4 @@
+use kemuler::backend;
 use windows::core::Result as WindowsResult;
 use windows::Win32::Foundation::BOOL as WindowsBool;
 use windows::Win32::Foundation::HWND as WindowsHWND;
@@ -153,11 +154,13 @@ fn main() {
 
     // attach_thread_input(roblox_window.thread_id, current_thread_id, true).unwrap();
 
-    // bingo area
-    // let area = (519, 684, 880, 354);
+    backend::set_keyboard_common_backend(Box::new(backend::default::DefaultBackend));
+    backend::set_mouse_backend(Box::new(backend::directx::General));
+
+    let area = (518, 792, 846, 237);
 
     // lreader board area
-    let area = (1677, 60, 233, 508);
+    // let area = (1677, 60, 233, 508);
 
     let alt_tab = || {
         (KeyCommon::Alt + KeyCommon::Tab).pulse();
@@ -178,29 +181,30 @@ fn main() {
     };
 
     let macro_loop = || {
-        let mut previous_pos: Option<(i32, i32)> = None;
+        let step_x = 30;
+        let step_y = 30;
         loop {
-            for (x, y) in positions_in_area(area.2, area.3, 5, 5) {
+            for (x, y) in positions_in_area(area.2, area.3, step_x, step_y) {
                 wait(0.01);
                 let x = x + area.0;
                 let y = y + area.1;
-                match previous_pos {
-                    Some((px, py)) => {
-                        let dx = x - px;
-                        let dy = y - py;
-                        previous_pos = Some((px + dx, py + dy));
-                        MousePosition.change_by((dx, dy));
-                    }
-                    None => {
-                        MousePosition.change_to((x, y));
-                        previous_pos = Some((x, y))
-                    }
-                }
+                MousePosition.change_to((x, y));
+                MouseButton::Left.pulse();
 
                 if is_quit() {
                     return;
                 }
             }
+
+            for y in (543..=(543 + 488)).step_by(step_y as usize) {
+                wait(0.01);
+                MousePosition.change_to((1920 / 2, y));
+                MouseButton::Left.pulse();
+                if is_quit() {
+                    return;
+                }
+            }
+
             if is_quit() {
                 return;
             }
