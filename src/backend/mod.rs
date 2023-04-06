@@ -5,6 +5,8 @@ use crate::simulate::{KeyCommon, KeyLayout, MouseButton};
 use parking_lot::{MappedRwLockReadGuard, RwLock, RwLockReadGuard};
 
 pub mod default;
+// I don't know if is this the right name since nothing mention directx
+// but it actually works with game that uses directx/directinput and others don't.
 #[cfg(feature = "directx")]
 pub mod directx;
 #[cfg(feature = "enigo")]
