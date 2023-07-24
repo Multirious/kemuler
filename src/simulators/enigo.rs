@@ -46,6 +46,8 @@ fn enigoify_common_mouse_button(button: common::MouseButton) -> enigo::MouseButt
         common::MouseButton::Left => enigo::MouseButton::Left,
         common::MouseButton::Middle => enigo::MouseButton::Middle,
         common::MouseButton::Right => enigo::MouseButton::Right,
+        common::MouseButton::X1 => enigo::MouseButton::Forward,
+        common::MouseButton::X2 => enigo::MouseButton::Back,
     }
 }
 

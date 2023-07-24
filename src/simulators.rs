@@ -5,3 +5,5 @@ pub use self::enigo::Enigo;
 
 #[cfg(feature = "enigo")]
 mod enigo;
+
+mod window;
