@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use std::mem::size_of;
 use windows::{
     self,
@@ -66,6 +68,7 @@ impl WindowsSendInputEnum {
 macro_rules! virtual_key_code_enum {
     ($($variant:ident)*) => {
         #[allow(non_camel_case_types)]
+        #[derive(Debug, Clone, Copy)]
         pub enum VirtualKeyCode {
             $(
                 $variant,
@@ -305,7 +308,7 @@ pub fn virtual_desktop_normalized_mouse_move_to(x: i32, y: i32) {
 /// and the mouse speed is equal to two,
 /// the system doubles the distance that resulted from applying the first threshold test.
 /// It is thus possible for the system to multiply specified relative mouse movement along the x or y axis
-/// by up to four times.
+// by up to four times.
 ///
 /// from https://stackoverflow.com/questions/60268940/sendinput-mouse-movement-calculation
 /// It is not worth it trying to normalize by mathing.
@@ -328,4 +331,57 @@ pub fn normalized_mouse_move_by(x: i32, y: i32) -> bool {
     };
     normalized_mouse_move_to(current_x + x, current_y + y);
     true
+}
+
+/// return true if is successful
+pub fn virtual_desktop_normalized_mouse_move_by(x: i32, y: i32) -> bool {
+    let Some((current_x, current_y)) = get_cursor_position() else {
+        return false;
+    };
+    virtual_desktop_normalized_mouse_move_to(current_x + x, current_y + y);
+    true
+}
+
+pub fn virtual_key_down(code: VirtualKeyCode) {
+    send_input(&[WindowsSendInputEnum::Keyboard {
+        wVk: code.code(),
+        wScan: 0,
+        dwFlags: KeyboardAndMouse::KEYBD_EVENT_FLAGS::default(),
+        time: 0,
+        dwExtraInfo: get_message_extra_info(),
+    }
+    .into_windows()]);
+}
+
+pub fn virtual_key_up(code: VirtualKeyCode) {
+    send_input(&[WindowsSendInputEnum::Keyboard {
+        wVk: code.code(),
+        wScan: 0,
+        dwFlags: KeyboardAndMouse::KEYEVENTF_KEYUP,
+        time: 0,
+        dwExtraInfo: get_message_extra_info(),
+    }
+    .into_windows()]);
+}
+
+pub fn unicode_key_down(utf16_char: u16) {
+    send_input(&[WindowsSendInputEnum::Keyboard {
+        wVk: KeyboardAndMouse::VIRTUAL_KEY(0),
+        wScan: utf16_char,
+        dwFlags: KeyboardAndMouse::KEYEVENTF_UNICODE,
+        time: 0,
+        dwExtraInfo: get_message_extra_info(),
+    }
+    .into_windows()]);
+}
+
+pub fn unicode_key_up(utf16_char: u16) {
+    send_input(&[WindowsSendInputEnum::Keyboard {
+        wVk: KeyboardAndMouse::VIRTUAL_KEY(0),
+        wScan: utf16_char,
+        dwFlags: KeyboardAndMouse::KEYEVENTF_UNICODE | KeyboardAndMouse::KEYEVENTF_KEYUP,
+        time: 0,
+        dwExtraInfo: get_message_extra_info(),
+    }
+    .into_windows()]);
 }
