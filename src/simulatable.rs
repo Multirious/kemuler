@@ -1,30 +1,30 @@
-//! This module contains the `Simulatable` trait and other things that implements it.
+//! This module contains things that can be simulated
 
 use std::fmt;
 
-use crate::simulate::Simulate;
+use crate::simulator::Simulate;
 
 /// Simulatable is a thing that can be simulated by a simulator.
 /// Alternatively called an event.
-pub trait Simulatable<S>: Sized {
+pub trait Simulatable<Smlt>: Sized {
     /// Simulate this input.
-    fn run_with(self, simulator: &mut S);
+    fn run_with(self, simulator: &mut Smlt);
 }
 
-/// Let [`Simulator`] knows that you want to set the value of an input to a value.
-/// Simulator must support this to be used.
+/// Let a simulator knows that you want to set the value of an input to a value.
+/// The simulator must support this to be used.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct SetTo<I, V> {
     pub input: I,
     pub to: V,
 }
 
-impl<I, V, S> Simulatable<S> for SetTo<I, V>
+impl<I, V, Smlt> Simulatable<Smlt> for SetTo<I, V>
 where
-    S: Simulate<Self>,
+    Smlt: Simulate<Self>,
 {
-    fn run_with(self, simulator: &mut S) {
-        simulator.run(self)
+    fn run_with(self, simulator: &mut Smlt) {
+        simulator.simulate(self)
     }
 }
 
@@ -38,20 +38,20 @@ where
     }
 }
 
-/// Let [`Simulator`] knows that you want to change the value of an input by a value.
-/// Simulator must support this to be used.
+/// Let simulator knows that you want to change the value of an input by a value.
+/// The simulator must support this to be used.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ChangeBy<I, V> {
     pub input: I,
     pub by: V,
 }
 
-impl<I, V, S> Simulatable<S> for ChangeBy<I, V>
+impl<I, V, Smlt> Simulatable<Smlt> for ChangeBy<I, V>
 where
-    S: Simulate<Self>,
+    Smlt: Simulate<Self>,
 {
-    fn run_with(self, simulator: &mut S) {
-        simulator.run(self)
+    fn run_with(self, simulator: &mut Smlt) {
+        simulator.simulate(self)
     }
 }
 

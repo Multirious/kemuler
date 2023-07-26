@@ -3,53 +3,60 @@
 use core::fmt;
 use std::{thread, time::Duration};
 
-use crate::event::Simulatable;
+use crate::simulatable::Simulatable;
 
 /// Helper combinator trait.
 pub trait Combine: Sized {
-    /// `self` and then `next`
-    fn then<I>(self, next: I) -> AndThen<Self, I> {
+    /// Simulate `self` and then `next`
+    fn then<S>(self, next: S) -> AndThen<Self, S> {
         AndThen(self, next)
     }
 
-    /// `self` and then sleep for amount of time
-    /// This is a convenience shorthand, see code for more details.
+    /// Simulate `self` and then sleep for amount of time
     fn sleep(self, duration: Duration) -> AndThen<Self, Sleep> {
         self.then(Sleep(duration))
     }
 
-    /// `self` and then sleep for amount of time in milliseconds
-    /// This is a convenience shorthand, see code for more details.
+    /// Simulate `self` and then sleep for amount of time in milliseconds
     fn sleep_ms(self, duration: u64) -> AndThen<Self, Sleep> {
         self.sleep(Duration::from_millis(duration))
     }
 
-    fn only_if(self, condition: bool) -> OnlyIf<Self> {
-        OnlyIf(self, condition)
+    /// Repeat simulation for amount of times
+    fn repeat(self, times: usize) -> Repeat<Self> {
+        Repeat(self, times)
+    }
+
+    /// Iterate through an iterator and simulate each item
+    fn into_simulatable_iter(self) -> IntoSimulatableIter<Self>
+    where
+        Self: Iterator,
+    {
+        IntoSimulatableIter(self)
     }
 }
 
-impl<T> Combine for T {}
+impl<S> Combine for S {}
 
 /// Simulate 2 input consecutively.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct AndThen<A, B>(A, B);
+pub struct AndThen<SA, SB>(pub SA, pub SB);
 
-impl<A, B, S> Simulatable<S> for AndThen<A, B>
+impl<SA, SB, Smlt> Simulatable<Smlt> for AndThen<SA, SB>
 where
-    A: Simulatable<S>,
-    B: Simulatable<S>,
+    SA: Simulatable<Smlt>,
+    SB: Simulatable<Smlt>,
 {
-    fn run_with(self, simulator: &mut S) {
+    fn run_with(self, simulator: &mut Smlt) {
         self.0.run_with(simulator);
         self.1.run_with(simulator);
     }
 }
 
-impl<A, B> fmt::Display for AndThen<A, B>
+impl<SA, SB> fmt::Display for AndThen<SA, SB>
 where
-    A: fmt::Display,
-    B: fmt::Display,
+    SA: fmt::Display,
+    SB: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{};{}", self.0, self.1)
@@ -58,10 +65,16 @@ where
 
 /// Thread sleep for amount of time.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct Sleep(Duration);
+pub struct Sleep(pub Duration);
 
-impl<S> Simulatable<S> for Sleep {
-    fn run_with(self, _: &mut S) {
+impl Sleep {
+    pub fn from_ms(ms: u64) -> Sleep {
+        Sleep(Duration::from_millis(ms))
+    }
+}
+
+impl<Smlt> Simulatable<Smlt> for Sleep {
+    fn run_with(self, _: &mut Smlt) {
         thread::sleep(self.0);
     }
 }
@@ -72,30 +85,93 @@ impl fmt::Display for Sleep {
     }
 }
 
-/// Simulate if the closure evaluated to true
-/// Useful with conditional compilation. Not sure about other stuff.
-pub struct OnlyIf<T>(T, bool);
+/// Simulate an input for amount of times
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Repeat<S>(pub S, pub usize);
 
-impl<T, S> Simulatable<S> for OnlyIf<T>
+impl<S, Smlt> Simulatable<Smlt> for Repeat<S>
 where
-    T: Simulatable<S>,
+    S: Simulatable<Smlt> + Clone,
 {
-    fn run_with(self, simulator: &mut S) {
-        if self.1 {
-            self.0.run_with(simulator)
+    fn run_with(self, simulator: &mut Smlt) {
+        for _ in 0..self.1 {
+            self.0.clone().run_with(simulator)
         }
     }
 }
 
-impl<T> fmt::Display for OnlyIf<T>
+impl<S> fmt::Display for Repeat<S>
 where
-    T: fmt::Display,
+    S: fmt::Display,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if self.1 {
-            write!(f, "run {};", self.0)
-        } else {
-            write!(f, "don't run {};", self.0)
+        write!(f, "{} {} times;", self.0, self.1)
+    }
+}
+
+macro_rules! tuple_impl {
+    ($($n:tt => $g:ident,)*) => {
+        tuple_impl!{@impl $($n => $g,)*}
+        tuple_impl!{@cut_one $($n => $g,)*}
+    };
+    (@cut_one ) => {};
+    (@cut_one $cn:tt => $cg:ident,) => {};
+    (@cut_one $_n:tt => $_g:ident, $($n:tt => $g:ident,)* ) => {
+        tuple_impl!{@impl $($n => $g,)*}
+        tuple_impl!{@cut_one $($n => $g,)*}
+    };
+    (@impl $($n:tt => $g:ident,)*) => {
+        impl<Smlt, $($g,)*> Simulatable<Smlt> for ($($g,)*)
+        where
+            $(
+                $g: Simulatable<Smlt>,
+            )*
+        {
+            fn run_with(self, simulator: &mut Smlt) {
+                $(
+                    tuple_impl!(@nth $n, self).run_with(simulator);
+                )*
+            }
         }
+    };
+    (@nth $n:tt, $x:ident) => {
+        ($x.$n)
+    };
+    () => {}
+}
+
+// what a fat one
+tuple_impl! {
+    31 => I31, 30 => I30, 29 => I29, 28 => I28,
+    27 => I27, 26 => I26, 25 => I25, 24 => I24,
+    23 => I23, 22 => I22, 21 => I21, 20 => I20,
+    19 => I19, 18 => I18, 17 => I17, 16 => I16,
+    15 => I15, 14 => I14, 13 => I13, 12 => I12,
+    11 => I11, 10 => I10, 9 => I9, 8 => I8,
+    7 => I7, 6 => I6, 5 => I5, 4 => I4,
+    3 => I3, 2 => I2, 1 => I1, 0 => I0,
+}
+
+/// Automatically do a for loop on an iterator and simulate for you!
+pub struct IntoSimulatableIter<I>(I);
+
+impl<I, Smlt> Simulatable<Smlt> for IntoSimulatableIter<I>
+where
+    I: IntoIterator,
+    <I as IntoIterator>::Item: Simulatable<Smlt>,
+{
+    fn run_with(self, simulator: &mut Smlt) {
+        for s in self.0 {
+            s.run_with(simulator);
+        }
+    }
+}
+
+impl<S> fmt::Display for IntoSimulatableIter<S>
+where
+    S: fmt::Display,
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "iterate {};", self.0)
     }
 }
