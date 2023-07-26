@@ -3,4 +3,4 @@
 #[cfg(feature = "enigo")]
 pub mod enigo;
 #[cfg(feature = "windows")]
-pub mod window;
+pub mod windows;

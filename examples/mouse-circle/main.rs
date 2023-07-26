@@ -1,6 +1,7 @@
 use std::{io::stdin, time::Instant};
 
-use kemuler::{prelude::*, simulators::enigo::Enigo};
+use kemuler::{prelude::*, simulators};
+use std::f64::consts::PI;
 
 fn prompt<T>(message: &str) -> T
 where
@@ -23,13 +24,14 @@ fn main() {
     let offset_x = radius;
     let offset_y = radius;
 
-    let mut enigo = Enigo::new();
+    // let mut s = simulators::enigo::Enigo::new();
+    let mut s = simulators::windows::Windows::new();
 
     let mut delta_time = 0f64;
-    let mut time_elasped = 0f64;
+    let mut time_elasped = PI / 2.0;
     loop {
         let previous_instant = Instant::now();
-        time_elasped += delta_time;
+        // time_elasped += delta_time;
 
         let x = (time_elasped * speed).cos() * radius;
         let y = (time_elasped * speed).sin() * radius;
@@ -37,7 +39,7 @@ fn main() {
         let pos_y = y + offset_y;
         MousePosition
             .move_to(pos_x as i32, pos_y as i32)
-            .run_with(&mut enigo);
+            .run_with(&mut s);
 
         delta_time = (Instant::now() - previous_instant).as_secs_f64();
     }
