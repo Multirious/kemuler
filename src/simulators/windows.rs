@@ -428,8 +428,8 @@ virtual_key_enum! {
     /// NUM LOCK key
     NumLock => VK_NUMLOCK
     /// SCROLL LOCK key
-    #[doc(alias = "ScrollLock")]
-    Scroll => VK_SCROLL
+    #[doc(alias = "Scroll")]
+    ScrollLock => VK_SCROLL
     OemNecEqual => VK_OEM_NEC_EQUAL
     OemFjJisho => VK_OEM_FJ_JISHO
     OemFjMasshou => VK_OEM_FJ_MASSHOU
