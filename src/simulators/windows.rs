@@ -20,8 +20,9 @@ macro_rules! virtual_key_enum {
                 $(#[$attr])*
                 #[doc = ""]
                 #[doc = "`"]
-                #[doc = stringify!($og_ident)
-]                #[doc = "`"]
+                #[doc = stringify!($og_ident)]
+                #[doc = "`"]
+                // #[doc(alias = stringify!($og_ident))]
                 $variant,
             )*
         }
@@ -39,41 +40,123 @@ macro_rules! virtual_key_enum {
 }
 
 virtual_key_enum! {
+    /// Numeric 0 key
+    /// (Not to be confused with [`VirtualKey::NumPad0`])
+    #[doc(alias = "Number0")]
     Num0 => VK_0
+    /// Numeric 1 key
+    /// (Not to be confused with [`VirtualKey::NumPad1`])
+    #[doc(alias = "Number1")]
     Num1 => VK_1
+    /// Numeric 2 key
+    /// (Not to be confused with [`VirtualKey::NumPad2`])
+    #[doc(alias = "Number2")]
     Num2 => VK_2
+    /// Numeric 3 key
+    /// (Not to be confused with [`VirtualKey::NumPad3`])
+    #[doc(alias = "Number3")]
     Num3 => VK_3
+    /// Numeric 4 key
+    /// (Not to be confused with [`VirtualKey::NumPad4`])
+    #[doc(alias = "Number4")]
     Num4 => VK_4
+    /// Numeric 5 key
+    /// (Not to be confused with [`VirtualKey::NumPad5`])
+    #[doc(alias = "Number5")]
     Num5 => VK_5
+    /// Numeric 6 key
+    /// (Not to be confused with [`VirtualKey::NumPad6`])
+    #[doc(alias = "Number6")]
     Num6 => VK_6
+    /// Numeric 7 key
+    /// (Not to be confused with [`VirtualKey::NumPad7`])
+    #[doc(alias = "Number7")]
     Num7 => VK_7
+    /// Numeric 8 key
+    /// (Not to be confused with [`VirtualKey::NumPad8`])
+    #[doc(alias = "Number8")]
     Num8 => VK_8
+    /// Numeric 9 key
+    /// (Not to be confused with [`VirtualKey::NumPad9`])
+    #[doc(alias = "Number9")]
     Num9 => VK_9
+    /// A key
+    #[doc(alias = "LetterA")]
     A => VK_A
+    /// B key
+    #[doc(alias = "LetterB")]
     B => VK_B
+    /// C key
+    #[doc(alias = "LetterC")]
     C => VK_C
+    /// D key
+    #[doc(alias = "LetterD")]
     D => VK_D
+    /// E key
+    #[doc(alias = "LetterE")]
     E => VK_E
+    /// F key
+    #[doc(alias = "LetterF")]
     F => VK_F
+    /// G key
+    #[doc(alias = "LetterG")]
     G => VK_G
+    /// H key
+    #[doc(alias = "LetterH")]
     H => VK_H
+    /// I key
+    #[doc(alias = "LetterI")]
     I => VK_I
+    /// J key
+    #[doc(alias = "LetterJ")]
     J => VK_J
+    /// K key
+    #[doc(alias = "LetterK")]
     K => VK_K
+    /// L key
+    #[doc(alias = "LetterL")]
     L => VK_L
+    /// M key
+    #[doc(alias = "LetterM")]
     M => VK_M
+    /// N key
+    #[doc(alias = "LetterN")]
     N => VK_N
+    /// O key
+    #[doc(alias = "LetterO")]
     O => VK_O
+    /// P key
+    #[doc(alias = "LetterP")]
     P => VK_P
+    /// Q key
+    #[doc(alias = "LetterQ")]
     Q => VK_Q
+    /// R key
+    #[doc(alias = "LetterR")]
     R => VK_R
+    /// S key
+    #[doc(alias = "LetterS")]
     S => VK_S
+    /// T key
+    #[doc(alias = "LetterT")]
     T => VK_T
+    /// U key
+    #[doc(alias = "LetterU")]
     U => VK_U
+    /// V key
+    #[doc(alias = "LetterV")]
     V => VK_V
+    /// W key
+    #[doc(alias = "LetterW")]
     W => VK_W
+    /// X key
+    #[doc(alias = "LetterX")]
     X => VK_X
+    /// Y key
+    #[doc(alias = "LetterY")]
     Y => VK_Y
+    /// Z key
+    #[doc(alias = "LetterZ")]
     Z => VK_Z
     AbntC1 => VK_ABNT_C1
     AbntC2 => VK_ABNT_C2
@@ -93,80 +176,116 @@ virtual_key_enum! {
     DbeSbcsChar => VK_DBE_SBCSCHAR
     _none_ => VK__none_
     /// Left mouse button
+    #[doc(alias = "LeftMouseButton")]
     LButton => VK_LBUTTON
     /// Right mouse button
+    #[doc(alias = "RightMouseButton")]
     RButton => VK_RBUTTON
     /// Control-break processing
     Cancel => VK_CANCEL
     /// Middle mouse button (three-button mouse)
+    #[doc(alias = "MiddleMouseButton")]
     MButton => VK_MBUTTON
     /// X1 mouse button
+    #[doc(alias = "ForwardMouseButton")]
     XButton1 => VK_XBUTTON1
     /// X2 mouse button
+    #[doc(alias = "BackMouseButton")]
+    #[doc(alias = "BackwardMouseButton")]
     XButton2 => VK_XBUTTON2
     /// BACKSPACE key
-    Back => VK_BACK
+    #[doc(alias = "Back")]
+    Backspace => VK_BACK
     /// TAB key
+    /// (Tabulator)
+    #[doc(alias = "Tabulator")]
     Tab => VK_TAB
     /// CLEAR key
     Clear => VK_CLEAR
     /// ENTER key
-    Return => VK_RETURN
+    #[doc(alias = "Return")]
+    Enter => VK_RETURN
     /// SHIFT key
     Shift => VK_SHIFT
     /// CTRL key
+    #[doc(alias = "Ctrl")]
     Control => VK_CONTROL
     /// ALT key
-    Menu => VK_MENU
+    #[doc(alias = "Menu")]
+    Alt => VK_MENU
     /// PAUSE key
     Pause => VK_PAUSE
     /// CAPS LOCK key
-    Capital => VK_CAPITAL
+    #[doc(alias = "Capital")]
+    CapsLock => VK_CAPITAL
     /// IME Kana mode
+    #[doc(alias = "IMEKana")]
     Kana => VK_KANA
-    /// IME Hanguel mode (maintained for compatibility; use VK_HANGUL)
-    Hangeul => VK_HANGEUL
+    // /// IME Hanguel mode (maintained for compatibility; use VK_HANGUL)
+    // removed because deprecated: Hangeul => VK_HANGEUL
     /// IME Hangul mode
+    #[doc(alias = "IMEHangul")]
+    #[doc(alias = "Hangeul")]
+    #[doc(alias = "IMEHangeul")]
     Hangul => VK_HANGUL
     /// IME On
+    #[doc(alias = "IMEOn")]
     ImeOn => VK_IME_ON
     /// IME Junja mode
+    #[doc(alias = "IMEJunja")]
     Junja => VK_JUNJA
     /// IME final mode
+    #[doc(alias = "IMEFinal")]
     Final => VK_FINAL
     /// IME Hanja mode
+    #[doc(alias = "IMEHanja")]
     Hanja => VK_HANJA
     /// IME Kanji mode
+    #[doc(alias = "IMEKanji")]
     Kanji => VK_KANJI
     /// IME Off
+    #[doc(alias = "IMEOff")]
     ImeOff => VK_IME_OFF
     /// ESC key
+    #[doc(alias = "Esc")]
     Escape => VK_ESCAPE
     /// IME convert
+    #[doc(alias = "IMEConvert")]
     Convert => VK_CONVERT
     /// IME nonconvert
+    #[doc(alias = "IMENonConvert")]
     NonConvert => VK_NONCONVERT
     /// IME accept
+    #[doc(alias = "IMEAccept")]
     Accept => VK_ACCEPT
     /// IME mode change request
+    #[doc(alias = "IMEModeChange")]
+    #[doc(alias = "IMEModeChangeRequest")]
     ModeChange => VK_MODECHANGE
     /// SPACEBAR
+    #[doc(alias = "SpaceBar")]
     Space => VK_SPACE
     /// PAGE UP key
-    Prior => VK_PRIOR
+    #[doc(alias = "Prior")]
+    PageUp => VK_PRIOR
     /// PAGE DOWN key
-    Next => VK_NEXT
+    #[doc(alias = "Next")]
+    PageDown => VK_NEXT
     /// END key
     End => VK_END
     /// HOME key
     Home => VK_HOME
     /// LEFT ARROW key
+    #[doc(alias = "LeftArrow")]
     Left => VK_LEFT
     /// UP ARROW key
+    #[doc(alias = "UpArrow")]
     Up => VK_UP
     /// RIGHT ARROW key
+    #[doc(alias = "RightArrow")]
     Right => VK_RIGHT
     /// DOWN ARROW key
+    #[doc(alias = "DownArrow")]
     Down => VK_DOWN
     /// SELECT key
     Select => VK_SELECT
@@ -175,40 +294,68 @@ virtual_key_enum! {
     /// EXECUTE key
     Execute => VK_EXECUTE
     /// PRINT SCREEN key
-    Snapshot => VK_SNAPSHOT
+    #[doc(alias = "SnapShot")]
+    #[doc(alias = "PrtSc")]
+    PrintScreen => VK_SNAPSHOT
     /// INS key
+    #[doc(alias = "Ins")]
     Insert => VK_INSERT
     /// DEL key
+    #[doc(alias = "Del")]
     Delete => VK_DELETE
     /// HELP key
     Help => VK_HELP
     /// Left Windows key (Natural keyboard)
+    #[doc(alias = "LeftWin")]
+    #[doc(alias = "LeftWindow")]
     LWin => VK_LWIN
     /// Right Windows key (Natural keyboard)
+    #[doc(alias = "RightWin")]
+    #[doc(alias = "RightWindow")]
     RWin => VK_RWIN
     /// Applications key (Natural keyboard)
     Apps => VK_APPS
     /// Computer Sleep key
     Sleep => VK_SLEEP
     /// Numeric keypad 0 key
+    /// (Not to be confused with [`VirtualKey::Num0`])
+    #[doc(alias = "Keypad0")]
     NumPad0 => VK_NUMPAD0
     /// Numeric keypad 1 key
+    /// (Not to be confused with [`VirtualKey::Num1`])
+    #[doc(alias = "Keypad1")]
     NumPad1 => VK_NUMPAD1
     /// Numeric keypad 2 key
+    /// (Not to be confused with [`VirtualKey::Num2`])
+    #[doc(alias = "Keypad2")]
     NumPad2 => VK_NUMPAD2
     /// Numeric keypad 3 key
+    /// (Not to be confused with [`VirtualKey::Num3`])
+    #[doc(alias = "Keypad3")]
     NumPad3 => VK_NUMPAD3
     /// Numeric keypad 4 key
+    /// (Not to be confused with [`VirtualKey::Num4`])
+    #[doc(alias = "Keypad4")]
     NumPad4 => VK_NUMPAD4
     /// Numeric keypad 5 key
+    /// (Not to be confused with [`VirtualKey::Num5`])
+    #[doc(alias = "Keypad5")]
     NumPad5 => VK_NUMPAD5
     /// Numeric keypad 6 key
+    /// (Not to be confused with [`VirtualKey::Num6`])
+    #[doc(alias = "Keypad6")]
     NumPad6 => VK_NUMPAD6
     /// Numeric keypad 7 key
+    /// (Not to be confused with [`VirtualKey::Num7`])
+    #[doc(alias = "Keypad7")]
     NumPad7 => VK_NUMPAD7
     /// Numeric keypad 8 key
+    /// (Not to be confused with [`VirtualKey::Num8`])
+    #[doc(alias = "Keypad8")]
     NumPad8 => VK_NUMPAD8
     /// Numeric keypad 9 key
+    /// (Not to be confused with [`VirtualKey::Num9`])
+    #[doc(alias = "Keypad9")]
     NumPad9 => VK_NUMPAD9
     /// Multiply key
     Multiply => VK_MULTIPLY
@@ -281,6 +428,7 @@ virtual_key_enum! {
     /// NUM LOCK key
     NumLock => VK_NUMLOCK
     /// SCROLL LOCK key
+    #[doc(alias = "ScrollLock")]
     Scroll => VK_SCROLL
     OemNecEqual => VK_OEM_NEC_EQUAL
     OemFjJisho => VK_OEM_FJ_JISHO
@@ -289,17 +437,25 @@ virtual_key_enum! {
     OemFjLoya => VK_OEM_FJ_LOYA
     OemFjRoya => VK_OEM_FJ_ROYA
     /// Left SHIFT key
+    #[doc(alias = "LeftShift")]
     LShift => VK_LSHIFT
     /// Right SHIFT key
+    #[doc(alias = "RightShift")]
     RShift => VK_RSHIFT
     /// Left CONTROL key
+    #[doc(alias = "LeftControl")]
     LControl => VK_LCONTROL
     /// Right CONTROL key
+    #[doc(alias = "RightControl")]
     RControl => VK_RCONTROL
     /// Left ALT key
-    LMenu => VK_LMENU
+    #[doc(alias = "LeftMenu")]
+    #[doc(alias = "LeftAlt")]
+    LAlt => VK_LMENU
     /// Right ALT key
-    RMenu => VK_RMENU
+    #[doc(alias = "RightMenu")]
+    #[doc(alias = "RightAlt")]
+    RAlt => VK_RMENU
     /// Browser Back key
     BrowserBack => VK_BROWSER_BACK
     /// Browser Forward key
@@ -337,18 +493,28 @@ virtual_key_enum! {
     /// Start Application 2 key
     LaunchApp2 => VK_LAUNCH_APP2
     /// For any country/region, the `;:` key
+    #[doc(alias = "SemiColonAndColon")]
     Oem1 => VK_OEM_1
     /// For any country/region, the `+` key
+    #[doc(alias = "Plus")]
     OemPlus => VK_OEM_PLUS
     /// For any country/region, the `,` key
+    #[doc(alias = "Comma")]
     OemComma => VK_OEM_COMMA
     /// For any country/region, the `-` key
+    #[doc(alias = "Dash")]
+    #[doc(alias = "Minus")]
     OemMinus => VK_OEM_MINUS
     /// For any country/region, the `.` key
+    #[doc(alias = "Period")]
     OemPeriod => VK_OEM_PERIOD
-    /// Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the `/?` key
+    /// Used for miscellaneous characters; it can vary by keyboard.
+    /// For the US standard keyboard, the `/?` key
+    #[doc(alias = "ForwardSlashAndQuestionMark")]
     Oem2 => VK_OEM_2
-    /// Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the `\`~` key
+    /// Used for miscellaneous characters; it can vary by keyboard.
+    /// For the US standard keyboard, the `\`~` key
+    #[doc(alias = "BackTickAndTilde")]
     Oem3 => VK_OEM_3
     GamepadA => VK_GAMEPAD_A
     GamepadB => VK_GAMEPAD_B
@@ -374,23 +540,35 @@ virtual_key_enum! {
     GamepadRightThumbStickDown => VK_GAMEPAD_RIGHT_THUMBSTICK_DOWN
     GamepadRightThumbStickRight => VK_GAMEPAD_RIGHT_THUMBSTICK_RIGHT
     GamepadRightThumbStickLeft => VK_GAMEPAD_RIGHT_THUMBSTICK_LEFT
-    /// Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the `[{` key
+    /// Used for miscellaneous characters; it can vary by keyboard.
+    /// For the US standard keyboard, the `[{` key
+    #[doc(alias = "OpeningSquareBracketAndOpeningCurlyBracket")]
     Oem4 => VK_OEM_4
-    /// Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the `\|` key
+    /// Used for miscellaneous characters; it can vary by keyboard.
+    /// For the US standard keyboard, the `\|` key
+    #[doc(alias = "BackSlashAndVerticalBar")]
     Oem5 => VK_OEM_5
-    /// Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the `]}` key
+    /// Used for miscellaneous characters; it can vary by keyboard.
+    /// For the US standard keyboard, the `]}` key
+    #[doc(alias = "ClosingSquareBracketAndClosingCurlyBracket")]
     Oem6 => VK_OEM_6
-    /// Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the `'"` key
+    /// Used for miscellaneous characters; it can vary by keyboard.
+    /// For the US standard keyboard, the `'"` key
+    #[doc(alias = "SingleQuoteAndDoubleQuote")]
     Oem7 => VK_OEM_7
     /// Used for miscellaneous characters; it can vary by keyboard.
     Oem8 => VK_OEM_8
     OemAx => VK_OEM_AX
-    /// The `<>` keys on the US standard keyboard, or the `\\|` key on the non-US 102-key keyboard
+    /// The `<>` keys on the US standard keyboard,
+    /// or the `\\|` key on the non-US 102-key keyboard
+    #[doc(alias = "OpeningAngleBracketAndClosingAngleBracket")]
+    #[doc(alias = "BackSlashBackSlashAndVerticalBar")]
     Oem102 => VK_OEM_102
     IcoHelp => VK_ICO_HELP
     Ico00 => VK_ICO_00
     /// IME PROCESS key
-    ProcessKey => VK_PROCESSKEY
+    #[doc(alias = "IMEProcessKey")]
+    Process => VK_PROCESSKEY
     IcoClear => VK_ICO_CLEAR
     /// Used to pass Unicode characters as if they were keystrokes. The VK_PACKET key is the low word of a 32-bit Virtual Key value used for non-keyboard input methods. For more information, see Remark in <a href="/en-us/windows/win32/api/winuser/ns-winuser-keybdinput" data-linktype="absolute-path">KEYBDINPUT</a>, <a href="/en-us/windows/win32/api/winuser/nf-winuser-sendinput" data-linktype="absolute-path">SendInput</a>, <a href="wm-keydown" data-linktype="relative-path">WM_KEYDOWN</a>, and <a href="wm-keyup" data-linktype="relative-path">WM_KEYUP</a>
     Packet => VK_PACKET
@@ -408,20 +586,30 @@ virtual_key_enum! {
     OemEnlw => VK_OEM_ENLW
     OemBacktab => VK_OEM_BACKTAB
     /// Attn key
+    /// (Attention)
+    #[doc(alias = "Attention")]
     Attn => VK_ATTN
     /// CrSel key
+    /// (Cursor Select)
+    #[doc(alias = "CursorSelect")]
     CrSel => VK_CRSEL
     /// ExSel key
+    /// (Extended Selection)
+    #[doc(alias = "ExtendedSelection")]
     ExSel => VK_EXSEL
     /// Erase EOF key
+    /// (Erase to end of field)
+    #[doc(alias = "EraseEOF")]
+    #[doc(alias = "EraseToEndOfField")]
     ErEof => VK_EREOF
     /// Play key
     Play => VK_PLAY
     /// Zoom key
     Zoom => VK_ZOOM
     /// Reserved
-    Noname => VK_NONAME
+    NoName => VK_NONAME
     /// PA1 key
+    /// (Program Action Key)
     Pa1 => VK_PA1
     /// Clear key
     OemClear => VK_OEM_CLEAR
