@@ -493,28 +493,35 @@ virtual_key_enum! {
     /// Start Application 2 key
     LaunchApp2 => VK_LAUNCH_APP2
     /// For any country/region, the `;:` key
-    #[doc(alias = "SemiColonAndColon")]
+    #[doc(alias("SemiColon", "Colon", ";:", ";", ":"))]
     Oem1 => VK_OEM_1
     /// For any country/region, the `+` key
-    #[doc(alias = "Plus")]
+    #[doc(alias("Plus", "+"))]
     OemPlus => VK_OEM_PLUS
     /// For any country/region, the `,` key
-    #[doc(alias = "Comma")]
+    #[doc(alias("Comma", ","))]
     OemComma => VK_OEM_COMMA
     /// For any country/region, the `-` key
-    #[doc(alias = "Dash")]
-    #[doc(alias = "Minus")]
+    #[doc(alias("Dash", "Minus", "-"))]
     OemMinus => VK_OEM_MINUS
     /// For any country/region, the `.` key
-    #[doc(alias = "Period")]
+    #[doc(alias("Period", "."))]
     OemPeriod => VK_OEM_PERIOD
     /// Used for miscellaneous characters; it can vary by keyboard.
     /// For the US standard keyboard, the `/?` key
-    #[doc(alias = "ForwardSlashAndQuestionMark")]
+    #[doc(alias(
+        "ForwardSlash", "Slash",
+        "QuestionMark", "Question",
+        "/?", "/", "?"
+    ))]
     Oem2 => VK_OEM_2
     /// Used for miscellaneous characters; it can vary by keyboard.
     /// For the US standard keyboard, the `\`~` key
-    #[doc(alias = "BackTickAndTilde")]
+    #[doc(alias(
+        "BackTick", "Tick",
+        "Tilde", "Squiggle", "Squiggly", "Swiggle", "Twiddle",
+        "`~", "`", "~"
+    ))]
     Oem3 => VK_OEM_3
     GamepadA => VK_GAMEPAD_A
     GamepadB => VK_GAMEPAD_B
@@ -542,27 +549,45 @@ virtual_key_enum! {
     GamepadRightThumbStickLeft => VK_GAMEPAD_RIGHT_THUMBSTICK_LEFT
     /// Used for miscellaneous characters; it can vary by keyboard.
     /// For the US standard keyboard, the `[{` key
-    #[doc(alias = "OpeningSquareBracketAndOpeningCurlyBracket")]
+    #[doc(alias(
+        "Parenthesis", "Parentheses","Bracket", "Brace", "Chevron",
+        "SquareBracket",  "OpeningSquareBracket",
+        "CurlyBracket",  "OpeningCurlyBracket",
+        "[{", "[", "{"
+    ))]
     Oem4 => VK_OEM_4
     /// Used for miscellaneous characters; it can vary by keyboard.
     /// For the US standard keyboard, the `\|` key
-    #[doc(alias = "BackSlashAndVerticalBar")]
+    #[doc(alias(
+        "Slash", "BackSlash",
+        "Pipe", "VerticalPipe", "VerticalBar",
+        "\\|", "\\", "|"
+    ))]
     Oem5 => VK_OEM_5
     /// Used for miscellaneous characters; it can vary by keyboard.
     /// For the US standard keyboard, the `]}` key
-    #[doc(alias = "ClosingSquareBracketAndClosingCurlyBracket")]
+    #[doc(alias(
+        "Parenthesis", "Parentheses","Bracket", "Brace", "Chevron",
+        "SquareBracket",  "ClosingSquareBracket",
+        "CurlyBracket",  "ClosingCurlyBracket",
+        "]}", "]", "}"
+    ))]
     Oem6 => VK_OEM_6
     /// Used for miscellaneous characters; it can vary by keyboard.
     /// For the US standard keyboard, the `'"` key
-    #[doc(alias = "SingleQuoteAndDoubleQuote")]
+    #[doc(alias("Quote", "SingleQuote", "DoubleQuote"))]
+    // Quotes in doc alises is not allowed ¯\_(ツ)_/¯
     Oem7 => VK_OEM_7
     /// Used for miscellaneous characters; it can vary by keyboard.
     Oem8 => VK_OEM_8
     OemAx => VK_OEM_AX
     /// The `<>` keys on the US standard keyboard,
-    /// or the `\\|` key on the non-US 102-key keyboard
-    #[doc(alias = "OpeningAngleBracketAndClosingAngleBracket")]
-    #[doc(alias = "BackSlashBackSlashAndVerticalBar")]
+    /// or the `\|` key on the non-US 102-key keyboard
+    #[doc(alias(
+        "Parenthesis", "Parentheses","Bracket", "Brace", "Chevron",
+        "OpeningAngleBracket", "ClosingAngleBracket",  "AngleBracket",
+        "<>", "<", ">", "\\|", "\\", "|"
+    ))]
     Oem102 => VK_OEM_102
     IcoHelp => VK_ICO_HELP
     Ico00 => VK_ICO_00
