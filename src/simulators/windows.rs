@@ -5,10 +5,12 @@ use crate::{
     simulator::Simulate,
 };
 
-mod inner;
 mod virtual_key;
-
 pub use virtual_key::VirtualKey;
+
+mod inner;
+
+impl VirtualKey {}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[non_exhaustive]
