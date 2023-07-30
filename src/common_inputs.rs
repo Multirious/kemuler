@@ -11,7 +11,6 @@ use std::fmt;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Key {
     /// alt key on Linux and Windows (option key on macOS)
-    // Alt, LAlt, RAlt,
     Alt,
     Shift,
     Control,
@@ -22,7 +21,7 @@ pub enum Key {
 
     End, Home, PageUp, PageDown,
 
-    Escape, Return, Space, Tab,
+    Escape, Enter, Space, Tab,
 
     Backspace, Delete,
 
