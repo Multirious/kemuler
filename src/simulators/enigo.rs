@@ -1,9 +1,9 @@
 //! Simulate input using `Enigo`.
 
 use crate::{
-    combinator::{AndThen, Combine},
-    inputs::common,
-    simulatable::{ChangeBy, SetTo},
+    combinator::{Combine, Sequence},
+    common_inputs,
+    input_event::*,
     simulator::Simulate,
 };
 use enigo::{KeyboardControllable, MouseControllable};
@@ -14,7 +14,17 @@ pub trait EnigoKeyExt: Sized + Clone {
     /// Set the key.
     /// This is a convenience shorthand for
     /// ```
-    /// SetTo { input: self, to: to }
+    /// # use kemuler::{
+    /// #     prelude::*,
+    /// #     input_event::*,
+    /// #     simulators::enigo::EnigoKeyExt
+    /// # };
+    /// # let this = enigo::Key::Alt;
+    /// # let to = true;
+    /// # let output =
+    /// SetTo { input: this, to: to }
+    /// # ;
+    /// # assert_eq!(this.set_to(to), output);
     /// ```
     fn set_to(self, to: bool) -> SetTo<Self, bool> {
         SetTo { input: self, to }
@@ -23,7 +33,16 @@ pub trait EnigoKeyExt: Sized + Clone {
     /// Press the key.
     /// This is a convenience shorthand for
     /// ```
-    /// SetTo { input: self, to: true }
+    /// # use kemuler::{
+    /// #     prelude::*,
+    /// #     input_event::*,
+    /// #     simulators::enigo::EnigoKeyExt
+    /// # };
+    /// # let this = enigo::Key::Alt;
+    /// # let output =
+    /// SetTo { input: this, to: true }
+    /// # ;
+    /// # assert_eq!(this.down(), output);
     /// ```
     fn down(self) -> SetTo<Self, bool> {
         self.set_to(true)
@@ -33,7 +52,16 @@ pub trait EnigoKeyExt: Sized + Clone {
     /// Release the key
     /// This is a convenience shorthand for
     /// ```
-    /// SetTo { input: self, to: false }
+    /// # use kemuler::{
+    /// #     prelude::*,
+    /// #     input_event::*,
+    /// #     simulators::enigo::EnigoKeyExt
+    /// # };
+    /// # let this = enigo::Key::Alt;
+    /// # let output =
+    /// SetTo { input: this, to: false }
+    /// # ;
+    /// # assert_eq!(this.up(), output);
     /// ```
     fn up(self) -> SetTo<Self, bool> {
         self.set_to(false)
@@ -42,12 +70,21 @@ pub trait EnigoKeyExt: Sized + Clone {
     /// Press and release the key.
     /// This is a convenience shorthand for
     /// ```
-    /// AndThen(
-    ///     SetTo { input: self, to: true },
-    ///     SetTo { input: self, to: false }
-    /// )
+    /// # use kemuler::{
+    /// #     prelude::*,
+    /// #     input_event::*,
+    /// #     simulators::enigo::EnigoKeyExt
+    /// # };
+    /// # let this = enigo::Key::Alt;
+    /// # let output =
+    /// (
+    ///     SetTo { input: this, to: true },
+    ///     SetTo { input: this, to: false }
+    /// ).seq()
+    /// # ;
+    /// # assert_eq!(this.click(), output);
     /// ```
-    fn click(self) -> AndThen<SetTo<Self, bool>, SetTo<Self, bool>> {
+    fn click(self) -> Sequence<(SetTo<Self, bool>, SetTo<Self, bool>)> {
         self.clone().down().then(self.up())
     }
 }
@@ -58,13 +95,13 @@ impl EnigoKeyExt for enigo::MouseButton {}
 /// Simulate input using `Enigo`.
 ///
 /// Implemented simulatables:
-/// - `SetTo   <enigo::Key           , bool>`
-/// - `SetTo   <common::Keyboard     , bool>`
-/// - `SetTo   <enigo::MouseButton   , bool>`
-/// - `SetTo   <common::MouseButton  , bool>`
-/// - `SetTo   <common::MousePosition, (i32, i32)>`
-/// - `ChangeBy<common::MousePosition, (i32, i32)>`
-/// - `ChangeBy<common::MouseScroll  , (i32, i32)>`
+/// - `SetTo   <enigo::Key                  , bool>`
+/// - `SetTo   <enigo::MouseButton          , bool>`
+/// - `SetTo   <common_inputs::Key          , bool>`
+/// - `SetTo   <common_inputs::MouseButton  , bool>`
+/// - `SetTo   <common_inputs::MousePosition, (i32, i32)>`
+/// - `ChangeBy<common_inputs::MousePosition, (i32, i32)>`
+/// - `ChangeBy<common_inputs::MouseScroll  , (i32, i32)>`
 #[derive(Debug, Default)]
 pub struct Enigo(pub enigo::Enigo);
 
@@ -90,54 +127,46 @@ impl Enigo {
     }
 }
 
-fn enigoify_common_mouse_button(button: common::MouseButton) -> enigo::MouseButton {
+fn enigoify_common_mouse_button(button: common_inputs::MouseButton) -> enigo::MouseButton {
     match button {
-        common::MouseButton::Left => enigo::MouseButton::Left,
-        common::MouseButton::Middle => enigo::MouseButton::Middle,
-        common::MouseButton::Right => enigo::MouseButton::Right,
-        common::MouseButton::X1 => enigo::MouseButton::Forward,
-        common::MouseButton::X2 => enigo::MouseButton::Back,
+        common_inputs::MouseButton::Left => enigo::MouseButton::Left,
+        common_inputs::MouseButton::Middle => enigo::MouseButton::Middle,
+        common_inputs::MouseButton::Right => enigo::MouseButton::Right,
     }
 }
 
-fn enigoify_common_keyboard(keyboard: common::Keyboard) -> enigo::Key {
-    match keyboard {
-        common::Keyboard::Alt => enigo::Key::Alt,
-        // common::Keyboard::LAlt => todo!(),
-        // common::Keyboard::RAlt => todo!(),
-        common::Keyboard::Shift => enigo::Key::Shift,
-        common::Keyboard::LShift => enigo::Key::LShift,
-        common::Keyboard::RShift => enigo::Key::RShift,
-        common::Keyboard::Control => enigo::Key::Control,
-        common::Keyboard::LControl => enigo::Key::LControl,
-        common::Keyboard::RControl => enigo::Key::RControl,
-        common::Keyboard::F1 => enigo::Key::F1,
-        common::Keyboard::F2 => enigo::Key::F2,
-        common::Keyboard::F3 => enigo::Key::F3,
-        common::Keyboard::F4 => enigo::Key::F4,
-        common::Keyboard::F5 => enigo::Key::F5,
-        common::Keyboard::F6 => enigo::Key::F6,
-        common::Keyboard::F7 => enigo::Key::F7,
-        common::Keyboard::F8 => enigo::Key::F8,
-        common::Keyboard::F9 => enigo::Key::F9,
-        common::Keyboard::F10 => enigo::Key::F10,
-        common::Keyboard::F11 => enigo::Key::F11,
-        common::Keyboard::F12 => enigo::Key::F12,
-        common::Keyboard::CapsLock => enigo::Key::CapsLock,
-        common::Keyboard::End => enigo::Key::End,
-        common::Keyboard::Home => enigo::Key::Home,
-        common::Keyboard::PageUp => enigo::Key::PageUp,
-        common::Keyboard::PageDown => enigo::Key::PageDown,
-        common::Keyboard::Escape => enigo::Key::Escape,
-        common::Keyboard::Return => enigo::Key::Return,
-        common::Keyboard::Space => enigo::Key::Space,
-        common::Keyboard::Tab => enigo::Key::Tab,
-        common::Keyboard::Backspace => enigo::Key::Backspace,
-        common::Keyboard::Delete => enigo::Key::Delete,
-        common::Keyboard::UpArrow => enigo::Key::UpArrow,
-        common::Keyboard::DownArrow => enigo::Key::DownArrow,
-        common::Keyboard::LeftArrow => enigo::Key::LeftArrow,
-        common::Keyboard::RightArrow => enigo::Key::RightArrow,
+fn enigoify_common_key(key: common_inputs::Key) -> enigo::Key {
+    match key {
+        common_inputs::Key::Alt => enigo::Key::Alt,
+        common_inputs::Key::Shift => enigo::Key::Shift,
+        common_inputs::Key::Control => enigo::Key::Control,
+        common_inputs::Key::F1 => enigo::Key::F1,
+        common_inputs::Key::F2 => enigo::Key::F2,
+        common_inputs::Key::F3 => enigo::Key::F3,
+        common_inputs::Key::F4 => enigo::Key::F4,
+        common_inputs::Key::F5 => enigo::Key::F5,
+        common_inputs::Key::F6 => enigo::Key::F6,
+        common_inputs::Key::F7 => enigo::Key::F7,
+        common_inputs::Key::F8 => enigo::Key::F8,
+        common_inputs::Key::F9 => enigo::Key::F9,
+        common_inputs::Key::F10 => enigo::Key::F10,
+        common_inputs::Key::F11 => enigo::Key::F11,
+        common_inputs::Key::F12 => enigo::Key::F12,
+        common_inputs::Key::CapsLock => enigo::Key::CapsLock,
+        common_inputs::Key::End => enigo::Key::End,
+        common_inputs::Key::Home => enigo::Key::Home,
+        common_inputs::Key::PageUp => enigo::Key::PageUp,
+        common_inputs::Key::PageDown => enigo::Key::PageDown,
+        common_inputs::Key::Escape => enigo::Key::Escape,
+        common_inputs::Key::Return => enigo::Key::Return,
+        common_inputs::Key::Space => enigo::Key::Space,
+        common_inputs::Key::Tab => enigo::Key::Tab,
+        common_inputs::Key::Backspace => enigo::Key::Backspace,
+        common_inputs::Key::Delete => enigo::Key::Delete,
+        common_inputs::Key::UpArrow => enigo::Key::UpArrow,
+        common_inputs::Key::DownArrow => enigo::Key::DownArrow,
+        common_inputs::Key::LeftArrow => enigo::Key::LeftArrow,
+        common_inputs::Key::RightArrow => enigo::Key::RightArrow,
     }
 }
 
@@ -155,17 +184,31 @@ impl Simulate<SetTo<enigo::Key, bool>> for Enigo {
     }
 }
 
-impl Simulate<SetTo<common::Keyboard, bool>> for Enigo {
-    fn simulate(&mut self, simulatable: SetTo<common::Keyboard, bool>) {
+impl Simulate<SetTo<common_inputs::Key, bool>> for Enigo {
+    fn simulate(&mut self, simulatable: SetTo<common_inputs::Key, bool>) {
         let SetTo {
-            input: keyboard,
+            input: key,
             to: is_down,
         } = simulatable;
-        let key = enigoify_common_keyboard(keyboard);
+        let key = enigoify_common_key(key);
         if is_down {
             self.0.key_down(key)
         } else {
             self.0.key_up(key)
+        }
+    }
+}
+
+impl Simulate<SetTo<common_inputs::Char, bool>> for Enigo {
+    fn simulate(&mut self, simulatable: SetTo<common_inputs::Char, bool>) {
+        let SetTo {
+            input: char_key,
+            to: is_down,
+        } = simulatable;
+        if is_down {
+            self.0.key_down(enigo::Key::Layout(char_key.0))
+        } else {
+            self.0.key_up(enigo::Key::Layout(char_key.0))
         }
     }
 }
@@ -184,8 +227,8 @@ impl Simulate<SetTo<enigo::MouseButton, bool>> for Enigo {
     }
 }
 
-impl Simulate<SetTo<common::MouseButton, bool>> for Enigo {
-    fn simulate(&mut self, simulatable: SetTo<common::MouseButton, bool>) {
+impl Simulate<SetTo<common_inputs::MouseButton, bool>> for Enigo {
+    fn simulate(&mut self, simulatable: SetTo<common_inputs::MouseButton, bool>) {
         let SetTo { input, to: is_down } = simulatable;
         let button = enigoify_common_mouse_button(input);
         if is_down {
@@ -196,22 +239,22 @@ impl Simulate<SetTo<common::MouseButton, bool>> for Enigo {
     }
 }
 
-impl Simulate<SetTo<common::MousePosition, (i32, i32)>> for Enigo {
-    fn simulate(&mut self, simulatable: SetTo<common::MousePosition, (i32, i32)>) {
+impl Simulate<SetTo<common_inputs::MousePosition, (i32, i32)>> for Enigo {
+    fn simulate(&mut self, simulatable: SetTo<common_inputs::MousePosition, (i32, i32)>) {
         let SetTo { input: _, to } = simulatable;
         self.0.mouse_move_to(to.0, to.1)
     }
 }
 
-impl Simulate<ChangeBy<common::MousePosition, (i32, i32)>> for Enigo {
-    fn simulate(&mut self, simulatable: ChangeBy<common::MousePosition, (i32, i32)>) {
+impl Simulate<ChangeBy<common_inputs::MousePosition, (i32, i32)>> for Enigo {
+    fn simulate(&mut self, simulatable: ChangeBy<common_inputs::MousePosition, (i32, i32)>) {
         let ChangeBy { input: _, by } = simulatable;
         self.0.mouse_move_relative(by.0, by.1)
     }
 }
 
-impl Simulate<ChangeBy<common::MouseScroll, (i32, i32)>> for Enigo {
-    fn simulate(&mut self, simulatable: ChangeBy<common::MouseScroll, (i32, i32)>) {
+impl Simulate<ChangeBy<common_inputs::MouseScroll, (i32, i32)>> for Enigo {
+    fn simulate(&mut self, simulatable: ChangeBy<common_inputs::MouseScroll, (i32, i32)>) {
         let ChangeBy { input: _, by } = simulatable;
         if by.0 != 0 {
             self.0.mouse_scroll_x(by.0);
