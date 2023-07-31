@@ -22,8 +22,7 @@ pub enum MouseButton {
     #[doc(alias = "Forward")]
     X1,
     /// Also known as backward button
-    #[doc(alias = "Backward")]
-    #[doc(alias = "Back")]
+    #[doc(alias("Backward", "Back"))]
     X2,
 }
 
