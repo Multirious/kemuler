@@ -1,5 +1,3 @@
-#![allow(unused)]
-
 use std::mem::size_of;
 use windows::{
     self,
@@ -19,16 +17,12 @@ enum WindowsSendInputEnum {
         wVk: KeyboardAndMouse::VIRTUAL_KEY,
         wScan: u16,
         dwFlags: KeyboardAndMouse::KEYBD_EVENT_FLAGS,
-        time: u32,
-        dwExtraInfo: usize,
     },
     Mouse {
         dx: i32,
         dy: i32,
         mouseData: i32,
         dwFlags: KeyboardAndMouse::MOUSE_EVENT_FLAGS,
-        time: u32,
-        dwExtraInfo: usize,
     },
     #[allow(unused)]
     Hardware {
@@ -39,29 +33,61 @@ enum WindowsSendInputEnum {
 }
 
 impl WindowsSendInputEnum {
-    #[rustfmt::skip]
     pub fn into_windows(self) -> KeyboardAndMouse::INPUT {
         let (a, b) = match self {
-            WindowsSendInputEnum::Keyboard { wVk, wScan, dwFlags, time, dwExtraInfo, } => (
+            WindowsSendInputEnum::Keyboard {
+                wVk,
+                wScan,
+                dwFlags,
+            } => (
                 KeyboardAndMouse::INPUT_KEYBOARD,
                 KeyboardAndMouse::INPUT_0 {
-                    ki: KeyboardAndMouse::KEYBDINPUT { wVk, wScan, dwFlags, time, dwExtraInfo, },
+                    ki: KeyboardAndMouse::KEYBDINPUT {
+                        wVk,
+                        wScan,
+                        dwFlags,
+                        time: 0,
+                        dwExtraInfo: get_message_extra_info(),
+                    },
                 },
             ),
-            WindowsSendInputEnum::Mouse { dx, dy, mouseData, dwFlags, time, dwExtraInfo, } => (
+            WindowsSendInputEnum::Mouse {
+                dx,
+                dy,
+                mouseData,
+                dwFlags,
+            } => (
                 KeyboardAndMouse::INPUT_MOUSE,
                 KeyboardAndMouse::INPUT_0 {
-                    mi: KeyboardAndMouse::MOUSEINPUT { dx, dy, mouseData, dwFlags, time, dwExtraInfo, },
+                    mi: KeyboardAndMouse::MOUSEINPUT {
+                        dx,
+                        dy,
+                        mouseData,
+                        dwFlags,
+                        time: 0,
+                        dwExtraInfo: get_message_extra_info(),
+                    },
                 },
             ),
-            WindowsSendInputEnum::Hardware { uMsg, wParamL, wParamH, } => (
+            WindowsSendInputEnum::Hardware {
+                uMsg,
+                wParamL,
+                wParamH,
+            } => (
                 KeyboardAndMouse::INPUT_HARDWARE,
                 KeyboardAndMouse::INPUT_0 {
-                    hi: KeyboardAndMouse::HARDWAREINPUT { uMsg, wParamL, wParamH, },
+                    hi: KeyboardAndMouse::HARDWAREINPUT {
+                        uMsg,
+                        wParamL,
+                        wParamH,
+                    },
                 },
             ),
         };
-        KeyboardAndMouse::INPUT { r#type: a, Anonymous: b }
+        KeyboardAndMouse::INPUT {
+            r#type: a,
+            Anonymous: b,
+        }
     }
 }
 
@@ -90,7 +116,7 @@ fn get_cursor_position() -> Option<(i32, i32)> {
 }
 
 #[allow(unused)]
-fn set_cursor_position(x: i32, y: i32) {
+fn ass_set_cursor_position(x: i32, y: i32) {
     unsafe { WindowsAndMessaging::SetCursorPos(x, y) };
 }
 
@@ -110,8 +136,6 @@ pub fn mouse_scroll(x: i32, y: i32) {
             dy: 0,
             mouseData: y,
             dwFlags: KeyboardAndMouse::MOUSEEVENTF_WHEEL,
-            time: 0,
-            dwExtraInfo: get_message_extra_info(),
         }
         .into_windows(),
         WindowsSendInputEnum::Mouse {
@@ -119,8 +143,6 @@ pub fn mouse_scroll(x: i32, y: i32) {
             dy: 0,
             mouseData: x,
             dwFlags: KeyboardAndMouse::MOUSEEVENTF_HWHEEL,
-            time: 0,
-            dwExtraInfo: get_message_extra_info(),
         }
         .into_windows(),
     ]);
@@ -144,8 +166,6 @@ pub fn mouse_button_down(button: MouseButton) {
         dy: 0,
         mouseData: mouse_data as i32,
         dwFlags: flag,
-        time: 0,
-        dwExtraInfo: get_message_extra_info(),
     }
     .into_windows()]);
 }
@@ -168,8 +188,6 @@ pub fn mouse_button_up(button: MouseButton) {
         dy: 0,
         mouseData: mouse_data as i32,
         dwFlags: flag,
-        time: 0,
-        dwExtraInfo: get_message_extra_info(),
     }
     .into_windows()]);
 }
@@ -185,14 +203,12 @@ pub fn mouse_move_to(x: i32, y: i32) {
         dy: y,
         mouseData: 0,
         dwFlags: KeyboardAndMouse::MOUSEEVENTF_MOVE | KeyboardAndMouse::MOUSEEVENTF_ABSOLUTE,
-        time: 0,
-        dwExtraInfo: get_message_extra_info(),
     }
     .into_windows()]);
 }
 
 // TODO: Needed testing
-pub fn normalized_mouse_move_to(x: i32, y: i32) {
+pub fn denormalized_mouse_move_to(x: i32, y: i32) {
     let (screen_size_x, screen_size_y) = primary_screen_size();
     let x = x * 65535 / screen_size_x;
     let y = y * 65535 / screen_size_y;
@@ -200,7 +216,7 @@ pub fn normalized_mouse_move_to(x: i32, y: i32) {
 }
 
 /// same as [`mouse_move_to`] but the coordinates map to the entire virtual desktop.
-fn virtual_desktop_mouse_move_to(x: i32, y: i32) {
+pub fn virtual_desktop_mouse_move_to(x: i32, y: i32) {
     send_input(&[WindowsSendInputEnum::Mouse {
         dx: x,
         dy: y,
@@ -208,14 +224,12 @@ fn virtual_desktop_mouse_move_to(x: i32, y: i32) {
         dwFlags: KeyboardAndMouse::MOUSEEVENTF_MOVE
             | KeyboardAndMouse::MOUSEEVENTF_ABSOLUTE
             | KeyboardAndMouse::MOUSEEVENTF_VIRTUALDESK,
-        time: 0,
-        dwExtraInfo: get_message_extra_info(),
     }
     .into_windows()]);
 }
 
 // TODO: Needed testing
-pub fn virtual_desktop_normalized_mouse_move_to(x: i32, y: i32) {
+pub fn virtual_desktop_denormalized_mouse_move_to(x: i32, y: i32) {
     let (screen_size_x, screen_size_y) = virtual_screen_size();
     let x = x * 65535 / screen_size_x;
     let y = y * 65535 / screen_size_y;
@@ -247,27 +261,25 @@ pub fn mouse_move_by(x: i32, y: i32) {
         dy: y,
         mouseData: 0,
         dwFlags: KeyboardAndMouse::MOUSEEVENTF_MOVE,
-        time: 0,
-        dwExtraInfo: get_message_extra_info(),
     }
     .into_windows()]);
 }
 
 /// return true if is successful
-pub fn normalized_mouse_move_by(x: i32, y: i32) -> bool {
+pub fn deaccelerated_mouse_move_by(x: i32, y: i32) -> bool {
     let Some((current_x, current_y)) = get_cursor_position() else {
         return false;
     };
-    normalized_mouse_move_to(current_x + x, current_y + y);
+    denormalized_mouse_move_to(current_x + x, current_y + y);
     true
 }
 
 /// return true if is successful
-pub fn virtual_desktop_normalized_mouse_move_by(x: i32, y: i32) -> bool {
+pub fn virtual_desktop_deaccelerated_mouse_move_by(x: i32, y: i32) -> bool {
     let Some((current_x, current_y)) = get_cursor_position() else {
         return false;
     };
-    virtual_desktop_normalized_mouse_move_to(current_x + x, current_y + y);
+    virtual_desktop_denormalized_mouse_move_to(current_x + x, current_y + y);
     true
 }
 
@@ -276,8 +288,6 @@ pub fn virtual_key_down(key: VirtualKey) {
         wVk: key.code(),
         wScan: 0,
         dwFlags: KeyboardAndMouse::KEYBD_EVENT_FLAGS::default(),
-        time: 0,
-        dwExtraInfo: get_message_extra_info(),
     }
     .into_windows()]);
 }
@@ -287,30 +297,86 @@ pub fn virtual_key_up(key: VirtualKey) {
         wVk: key.code(),
         wScan: 0,
         dwFlags: KeyboardAndMouse::KEYEVENTF_KEYUP,
-        time: 0,
-        dwExtraInfo: get_message_extra_info(),
     }
     .into_windows()]);
 }
 
-pub fn unicode_key_down(utf16_char: u16) {
+pub fn unicode_utf16_key_down(utf16_char: u16) {
     send_input(&[WindowsSendInputEnum::Keyboard {
         wVk: KeyboardAndMouse::VIRTUAL_KEY(0),
         wScan: utf16_char,
         dwFlags: KeyboardAndMouse::KEYEVENTF_UNICODE,
-        time: 0,
-        dwExtraInfo: get_message_extra_info(),
     }
     .into_windows()]);
 }
 
-pub fn unicode_key_up(utf16_char: u16) {
+pub fn unicode_utf16_key_up(utf16_char: u16) {
     send_input(&[WindowsSendInputEnum::Keyboard {
         wVk: KeyboardAndMouse::VIRTUAL_KEY(0),
         wScan: utf16_char,
         dwFlags: KeyboardAndMouse::KEYEVENTF_UNICODE | KeyboardAndMouse::KEYEVENTF_KEYUP,
-        time: 0,
-        dwExtraInfo: get_message_extra_info(),
     }
     .into_windows()]);
+}
+
+pub fn char_key_down(char: char) {
+    // from the doc: A buffer of length 2 is large enough to encode any `char`.
+    let utf16_bytes = char.encode_utf16(&mut [0; 2]);
+    let inputs = match utf16_bytes.len() {
+        1 => [WindowsSendInputEnum::Keyboard {
+            wVk: KeyboardAndMouse::VIRTUAL_KEY(0),
+            wScan: utf16_bytes[0],
+            dwFlags: KeyboardAndMouse::KEYEVENTF_UNICODE,
+        }
+        .into_windows()]
+        .as_slice(),
+        2 => [
+            WindowsSendInputEnum::Keyboard {
+                wVk: KeyboardAndMouse::VIRTUAL_KEY(0),
+                wScan: utf16_bytes[0],
+                dwFlags: KeyboardAndMouse::KEYEVENTF_UNICODE,
+            }
+            .into_windows(),
+            WindowsSendInputEnum::Keyboard {
+                wVk: KeyboardAndMouse::VIRTUAL_KEY(0),
+                wScan: utf16_bytes[1],
+                dwFlags: KeyboardAndMouse::KEYEVENTF_UNICODE,
+            }
+            .into_windows(),
+        ]
+        .as_slice(),
+        _ => unreachable!("the resuling encoding size should not be greater than 2"),
+    };
+    send_input(inputs);
+}
+
+pub fn char_key_up(char: char) {
+    // from the doc: A buffer of length 2 is large enough to encode any `char`.
+    let utf16_bytes = char.encode_utf16(&mut [0; 2]);
+    let inputs = match utf16_bytes.len() {
+        1 => [WindowsSendInputEnum::Keyboard {
+            wVk: KeyboardAndMouse::VIRTUAL_KEY(0),
+            wScan: utf16_bytes[0],
+            dwFlags: KeyboardAndMouse::KEYEVENTF_UNICODE | KeyboardAndMouse::KEYEVENTF_KEYUP,
+        }
+        .into_windows()]
+        .as_slice(),
+        2 => [
+            WindowsSendInputEnum::Keyboard {
+                wVk: KeyboardAndMouse::VIRTUAL_KEY(0),
+                wScan: utf16_bytes[0],
+                dwFlags: KeyboardAndMouse::KEYEVENTF_UNICODE | KeyboardAndMouse::KEYEVENTF_KEYUP,
+            }
+            .into_windows(),
+            WindowsSendInputEnum::Keyboard {
+                wVk: KeyboardAndMouse::VIRTUAL_KEY(0),
+                wScan: utf16_bytes[1],
+                dwFlags: KeyboardAndMouse::KEYEVENTF_UNICODE | KeyboardAndMouse::KEYEVENTF_KEYUP,
+            }
+            .into_windows(),
+        ]
+        .as_slice(),
+        _ => unreachable!("the resuling encoding size should not be greater than 2"),
+    };
+    send_input(inputs);
 }

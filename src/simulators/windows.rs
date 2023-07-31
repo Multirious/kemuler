@@ -132,14 +132,41 @@ fn windowsify_common_key(key: common_inputs::Key) -> VirtualKey {
     }
 }
 
-/// Mouse position precision is subject to differ a bit due to weird Windows API
-/// I had to normalize.
 #[derive(Default)]
 pub struct Windows;
 
 impl Windows {
     pub fn new() -> Windows {
         Windows
+    }
+}
+
+impl Simulate<SetTo<VirtualKey, bool>> for Windows {
+    fn simulate(&mut self, simulatable: SetTo<VirtualKey, bool>) {
+        let SetTo {
+            input: key,
+            to: is_down,
+        } = simulatable;
+        if is_down {
+            inner::virtual_key_down(key)
+        } else {
+            inner::virtual_key_up(key)
+        }
+    }
+}
+
+impl Simulate<SetTo<common_inputs::Char, bool>> for Windows {
+    fn simulate(&mut self, simulatable: SetTo<common_inputs::Char, bool>) {
+        let SetTo {
+            input: char,
+            to: is_down,
+        } = simulatable;
+        let char = char.0;
+        if is_down {
+            inner::char_key_down(char)
+        } else {
+            inner::char_key_up(char)
+        }
     }
 }
 
@@ -164,14 +191,14 @@ impl Simulate<SetTo<common_inputs::MousePosition, (i32, i32)>> for Windows {
             input: _,
             to: position,
         } = simulatable;
-        inner::virtual_desktop_normalized_mouse_move_to(position.0, position.1);
+        inner::virtual_desktop_denormalized_mouse_move_to(position.0, position.1);
     }
 }
 
 impl Simulate<ChangeBy<common_inputs::MousePosition, (i32, i32)>> for Windows {
     fn simulate(&mut self, simulatable: ChangeBy<common_inputs::MousePosition, (i32, i32)>) {
         let ChangeBy { input: _, by } = simulatable;
-        inner::virtual_desktop_normalized_mouse_move_by(by.0, by.1);
+        inner::virtual_desktop_denormalized_mouse_move_to(by.0, by.1);
     }
 }
 
