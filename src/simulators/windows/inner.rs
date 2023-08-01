@@ -91,6 +91,7 @@ impl WindowsSendInputEnum {
     }
 }
 
+#[allow(unused)]
 fn primary_screen_size() -> (i32, i32) {
     // SAFETY: calls has no dangerous side-effects
     let x = unsafe { GetSystemMetrics(WindowsAndMessaging::SM_CXSCREEN) };
@@ -105,6 +106,7 @@ fn virtual_screen_size() -> (i32, i32) {
     (x, y)
 }
 
+#[allow(unused)]
 fn get_cursor_position() -> Option<(i32, i32)> {
     let mut pos = windows::Win32::Foundation::POINT { x: 0, y: 0 };
     let res = unsafe { WindowsAndMessaging::GetCursorPos(&mut pos) };
@@ -197,6 +199,7 @@ pub fn mouse_button_up(button: MouseButton) {
 /// Coordinate (0,0) maps onto the upper-left corner of the display surface;
 /// coordinate (65535,65535) maps onto the lower-right corner.
 /// In a multimonitor system, the coordinates map to the primary monitor.
+#[allow(unused)]
 pub fn mouse_move_to(x: i32, y: i32) {
     send_input(&[WindowsSendInputEnum::Mouse {
         dx: x,
@@ -208,6 +211,7 @@ pub fn mouse_move_to(x: i32, y: i32) {
 }
 
 // TODO: Needed testing
+#[allow(unused)]
 pub fn denormalized_mouse_move_to(x: i32, y: i32) {
     let (screen_size_x, screen_size_y) = primary_screen_size();
     let x = x * 65535 / screen_size_x;
@@ -255,6 +259,7 @@ pub fn virtual_desktop_denormalized_mouse_move_to(x: i32, y: i32) {
 ///
 /// from https://stackoverflow.com/questions/60268940/sendinput-mouse-movement-calculation
 /// It is not worth it trying to normalize by mathing.
+#[allow(unused)]
 pub fn mouse_move_by(x: i32, y: i32) {
     send_input(&[WindowsSendInputEnum::Mouse {
         dx: x,
@@ -266,6 +271,7 @@ pub fn mouse_move_by(x: i32, y: i32) {
 }
 
 /// return true if is successful
+#[allow(unused)]
 pub fn deaccelerated_mouse_move_by(x: i32, y: i32) -> bool {
     let Some((current_x, current_y)) = get_cursor_position() else {
         return false;
@@ -275,6 +281,7 @@ pub fn deaccelerated_mouse_move_by(x: i32, y: i32) -> bool {
 }
 
 /// return true if is successful
+#[allow(unused)]
 pub fn virtual_desktop_deaccelerated_mouse_move_by(x: i32, y: i32) -> bool {
     let Some((current_x, current_y)) = get_cursor_position() else {
         return false;
@@ -301,6 +308,7 @@ pub fn virtual_key_up(key: VirtualKey) {
     .into_windows()]);
 }
 
+#[allow(unused)]
 pub fn unicode_utf16_key_down(utf16_char: u16) {
     send_input(&[WindowsSendInputEnum::Keyboard {
         wVk: KeyboardAndMouse::VIRTUAL_KEY(0),
@@ -310,6 +318,7 @@ pub fn unicode_utf16_key_down(utf16_char: u16) {
     .into_windows()]);
 }
 
+#[allow(unused)]
 pub fn unicode_utf16_key_up(utf16_char: u16) {
     send_input(&[WindowsSendInputEnum::Keyboard {
         wVk: KeyboardAndMouse::VIRTUAL_KEY(0),
@@ -321,62 +330,36 @@ pub fn unicode_utf16_key_up(utf16_char: u16) {
 
 pub fn char_key_down(char: char) {
     // from the doc: A buffer of length 2 is large enough to encode any `char`.
-    let utf16_bytes = char.encode_utf16(&mut [0; 2]);
-    let inputs = match utf16_bytes.len() {
-        1 => [WindowsSendInputEnum::Keyboard {
-            wVk: KeyboardAndMouse::VIRTUAL_KEY(0),
-            wScan: utf16_bytes[0],
-            dwFlags: KeyboardAndMouse::KEYEVENTF_UNICODE,
-        }
-        .into_windows()]
-        .as_slice(),
-        2 => [
+    let mut utf16_bytes = [0; 2];
+    let utf16_bytes = char.encode_utf16(&mut utf16_bytes);
+    let inputs = utf16_bytes
+        .iter()
+        .map(|c| {
             WindowsSendInputEnum::Keyboard {
                 wVk: KeyboardAndMouse::VIRTUAL_KEY(0),
-                wScan: utf16_bytes[0],
+                wScan: *c,
                 dwFlags: KeyboardAndMouse::KEYEVENTF_UNICODE,
             }
-            .into_windows(),
-            WindowsSendInputEnum::Keyboard {
-                wVk: KeyboardAndMouse::VIRTUAL_KEY(0),
-                wScan: utf16_bytes[1],
-                dwFlags: KeyboardAndMouse::KEYEVENTF_UNICODE,
-            }
-            .into_windows(),
-        ]
-        .as_slice(),
-        _ => unreachable!("the resuling encoding size should not be greater than 2"),
-    };
-    send_input(inputs);
+            .into_windows()
+        })
+        .collect::<Vec<_>>();
+    send_input(&inputs[..]);
 }
 
 pub fn char_key_up(char: char) {
     // from the doc: A buffer of length 2 is large enough to encode any `char`.
-    let utf16_bytes = char.encode_utf16(&mut [0; 2]);
-    let inputs = match utf16_bytes.len() {
-        1 => [WindowsSendInputEnum::Keyboard {
-            wVk: KeyboardAndMouse::VIRTUAL_KEY(0),
-            wScan: utf16_bytes[0],
-            dwFlags: KeyboardAndMouse::KEYEVENTF_UNICODE | KeyboardAndMouse::KEYEVENTF_KEYUP,
-        }
-        .into_windows()]
-        .as_slice(),
-        2 => [
+    let mut utf16_bytes = [0; 2];
+    let utf16_bytes = char.encode_utf16(&mut utf16_bytes);
+    let inputs = utf16_bytes
+        .iter()
+        .map(|c| {
             WindowsSendInputEnum::Keyboard {
                 wVk: KeyboardAndMouse::VIRTUAL_KEY(0),
-                wScan: utf16_bytes[0],
+                wScan: *c,
                 dwFlags: KeyboardAndMouse::KEYEVENTF_UNICODE | KeyboardAndMouse::KEYEVENTF_KEYUP,
             }
-            .into_windows(),
-            WindowsSendInputEnum::Keyboard {
-                wVk: KeyboardAndMouse::VIRTUAL_KEY(0),
-                wScan: utf16_bytes[1],
-                dwFlags: KeyboardAndMouse::KEYEVENTF_UNICODE | KeyboardAndMouse::KEYEVENTF_KEYUP,
-            }
-            .into_windows(),
-        ]
-        .as_slice(),
-        _ => unreachable!("the resuling encoding size should not be greater than 2"),
-    };
-    send_input(inputs);
+            .into_windows()
+        })
+        .collect::<Vec<_>>();
+    send_input(&inputs[..]);
 }
