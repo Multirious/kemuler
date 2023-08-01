@@ -6,6 +6,7 @@ macro_rules! virtual_key_enum {
         )*
     ) => {
         /// https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+        #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
         pub enum VirtualKey {
             $(
                 $(#[$attr])*

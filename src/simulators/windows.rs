@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::{
     common_inputs,
     input_event::{ChangeBy, SetTo},
@@ -11,6 +13,12 @@ pub use virtual_key::VirtualKey;
 mod inner;
 
 impl ButtonLike for VirtualKey {}
+
+impl fmt::Display for VirtualKey {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[non_exhaustive]
@@ -27,6 +35,12 @@ pub enum MouseButton {
 }
 
 impl ButtonLike for MouseButton {}
+
+impl fmt::Display for MouseButton {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
 
 fn windowsify_common_mouse_button(button: common_inputs::MouseButton) -> MouseButton {
     match button {
