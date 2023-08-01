@@ -1,16 +1,16 @@
 use crate::{
-    combinator::{Combine, Sequence},
     common_inputs,
     input_event::{ChangeBy, SetTo},
     simulator::Simulate,
 };
 
 mod virtual_key;
+use common_inputs::ButtonLike;
 pub use virtual_key::VirtualKey;
 
 mod inner;
 
-impl VirtualKey {}
+impl ButtonLike for VirtualKey {}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[non_exhaustive]
@@ -26,67 +26,7 @@ pub enum MouseButton {
     X2,
 }
 
-impl MouseButton {
-    /// Set this button.
-    /// This is a convenience shorthand for
-    /// ```
-    /// # use kemuler::{prelude::*, input_event::*};
-    /// # let this = MouseButton::Left;
-    /// # let to = true;
-    /// # let output =
-    /// SetTo { input: this, to: to }
-    /// # ;
-    /// # assert_eq!(this.set_to(to), output);
-    /// ```
-    pub fn set_to(self, to: bool) -> SetTo<Self, bool> {
-        SetTo { input: self, to }
-    }
-
-    /// Press the button.
-    /// This is a convenience shorthand for
-    /// ```
-    /// # use kemuler::{prelude::*, input_event::*};
-    /// # let this = MouseButton::Left;
-    /// # let output =
-    /// SetTo { input: this, to: true }
-    /// # ;
-    /// # assert_eq!(this.down(), output);
-    /// ```
-    pub fn down(self) -> SetTo<Self, bool> {
-        self.set_to(true)
-    }
-
-    /// Release the button.
-    /// This is a convenience shorthand for
-    /// ```
-    /// # use kemuler::{prelude::*, input_event::*};
-    /// # let this = MouseButton::Left;
-    /// # let output =
-    /// SetTo { input: this, to: false }
-    /// # ;
-    /// # assert_eq!(this.up(), output);
-    /// ```
-    pub fn up(self) -> SetTo<Self, bool> {
-        self.set_to(false)
-    }
-
-    /// Press and release the button.
-    /// This is a convenience shorthand for
-    /// ```
-    /// # use kemuler::{prelude::*, input_event::*};
-    /// # let this = MouseButton::Left;
-    /// # let output =
-    /// (
-    ///     SetTo { input: this, to: true },
-    ///     SetTo { input: this, to: false }
-    /// ).seq()
-    /// # ;
-    /// # assert_eq!(this.click(), output);
-    /// ```
-    pub fn click(self) -> Sequence<(SetTo<Self, bool>, SetTo<Self, bool>)> {
-        self.down().then(self.up())
-    }
-}
+impl ButtonLike for MouseButton {}
 
 fn windowsify_common_mouse_button(button: common_inputs::MouseButton) -> MouseButton {
     match button {
@@ -146,6 +86,21 @@ impl Simulate<SetTo<VirtualKey, bool>> for Windows {
             input: key,
             to: is_down,
         } = simulatable;
+        if is_down {
+            inner::virtual_key_down(key)
+        } else {
+            inner::virtual_key_up(key)
+        }
+    }
+}
+
+impl Simulate<SetTo<common_inputs::Key, bool>> for Windows {
+    fn simulate(&mut self, simulatable: SetTo<common_inputs::Key, bool>) {
+        let SetTo {
+            input: key,
+            to: is_down,
+        } = simulatable;
+        let key = windowsify_common_key(key);
         if is_down {
             inner::virtual_key_down(key)
         } else {
