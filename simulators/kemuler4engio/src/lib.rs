@@ -1,10 +1,10 @@
 //! Simulate input using `Enigo`.
 
-use crate::{common_inputs, input_event::*, simulator::Simulate};
 use common_inputs::ButtonLike;
-use enigo::{KeyboardControllable, MouseControllable};
+use kemuler::{common_inputs, input_event::*, simulator::Simulate};
 
 pub use enigo;
+use enigo::{KeyboardControllable, MouseControllable};
 
 impl ButtonLike for enigo::Key {}
 impl ButtonLike for enigo::MouseButton {}

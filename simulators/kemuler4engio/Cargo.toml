@@ -1,0 +1,17 @@
+[package]
+name = "kemuler4enigo"
+version = "0.1.0"
+authors = [ "Multirious" ]
+edition = "2021"
+
+description = "Kemuler support for Enigo"
+homepage = "https://github.com/Multirious/kemuler"
+repository = "https://github.com/Multirious/kemuler"
+keywords = ["kemuler"]
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+kemuler = { path = "../.." }
+enigo = { version = "0.1.1" }

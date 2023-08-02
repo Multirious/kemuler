@@ -1,0 +1,15 @@
+[package]
+name = "kemuler-string-event-logger"
+version = "0.1.0"
+authors = [ "Multirious" ]
+edition = "2021"
+
+description = "Kemuler, simulator that logs event as string"
+homepage = "https://github.com/Multirious/kemuler"
+repository = "https://github.com/Multirious/kemuler"
+keywords = ["kemuler"]
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]

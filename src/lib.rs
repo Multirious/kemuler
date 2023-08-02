@@ -144,7 +144,6 @@ pub mod simulatable;
 pub mod simulator;
 
 pub mod common_inputs;
-pub mod simulators;
 
 pub mod prelude {
     //! Re-exports
