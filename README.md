@@ -1,3 +1,6 @@
+# Deprecated
+This repository has been moved to https://github.com/kemuler/kemuler.
+
 # `kemuler`
 
 *this crate is currently in a rapid development phase.
